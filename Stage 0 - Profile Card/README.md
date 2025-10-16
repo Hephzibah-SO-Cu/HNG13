@@ -19,15 +19,6 @@ Designed for clarity and precision — think **stopwatch-style timing** with **c
 
 ---
 
-## 📂 Project Structure
-HNG-Timer/
-│
-├── index.html # Main page structure
-├── style.css # Styles for layout and text
-└── script.js # Real-time clock logic
-
----
-
 ## 🚀 Features
 - Displays **live date and time** in the user’s **local timezone**
 - Includes **milliseconds** for high precision
