@@ -8,20 +8,32 @@
 }
 
 html, body {
-  height: 100%;
+  width: 100%;
+  min-height: 100vh; /* ✅ allow content to grow beyond screen */
   font-family: "Inter", Arial, sans-serif;
   background: #f2f4f8;
   color: #222;
   line-height: 1.6;
   display: flex;
-  align-items: center;
   justify-content: center;
   padding: 1rem;
+  overflow-x: hidden; /* ✅ prevent sideways scroll */
+}
+
+/* remove vertical centering (caused the dip issue) */
+body {
+  align-items: flex-start; /* ✅ start content from top */
 }
 
 /* ==========
-   Card Layout
+   Main Wrapper
    ========== */
+main {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .profile-card {
   background: #fff;
   border-radius: 16px;
@@ -29,9 +41,11 @@ html, body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-width: 400px;
   width: 100%;
+  max-width: 400px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 1rem auto;
+  box-sizing: border-box;
 }
 
 .profile-card:hover {
@@ -56,6 +70,8 @@ html, body {
   object-fit: cover;
   border: 4px solid #fff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  max-width: 100%;
+  height: auto;
 }
 
 /* ==========
@@ -154,5 +170,27 @@ html, body {
   .avatar {
     width: 150px;
     height: 150px;
+  }
+}
+
+/* ==========
+   Mobile Fixes (Extra Safety)
+   ========== */
+@media (max-width: 699px) {
+  main, article, .profile-card {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .profile-content {
+    padding: 1.25rem;
+  }
+
+  .social-links ul {
+    justify-content: center;
+  }
+
+  .bio, .hobbies li, .dislikes li {
+    font-size: 0.9rem;
   }
 }
