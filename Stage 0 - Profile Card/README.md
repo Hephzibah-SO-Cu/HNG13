@@ -105,8 +105,8 @@ Each page is responsive, keyboard-accessible, and uses consistent visual styling
     No external dependencies required.
 
 ## 🌐 Live Demo
-    Live URL: https://hng-13-stage-0-busayo.vercel.app/
-    GitHub Repo: https://github.com/Hephzibah-SO-Cu/HNG13/tree/main/Stage%200%20-%20Profile%20Card
+Live URL: https://hng-13-stage-0-busayo.vercel.app/
+GitHub Repo: https://github.com/Hephzibah-SO-Cu/HNG13/tree/main/Stage%200%20-%20Profile%20Card
 
 ## 📜 License
-    Open-source and free to use for learning, testing, or reference during the HNG13 Internship.
+ Open-source and free to use for learning, testing, or reference during the HNG13 Internship.
