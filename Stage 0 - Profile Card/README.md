@@ -93,11 +93,6 @@ Each page is responsive, keyboard-accessible, and uses consistent visual styling
 
 ## ⚙️ How to Run Locally
 1. Clone this repo:
-
-   ```bash
-   git clone <your-repo-link>
-   cd hng13-stage1
-   ```
 2. Open any of the pages in your browser:
     index.html → Profile
     about.html → About Me
