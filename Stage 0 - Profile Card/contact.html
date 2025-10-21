@@ -3,83 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Contact form for Busayo's HNG13 Stage 1 task" />
-  <title>Contact Us | HNG13 Stage 1 - Busayo</title>
+  <title>Contact Me</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
 </head>
+<body>
+  <!-- Video Background -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="assets/BG.mp4" type="video/mp4" />
+    <img src="assets/BG.jpg" alt="background" />
+  </video>
 
-<body class="contact-page">
-  <main data-testid="test-contact-page" class="contact-container">
-    <h1>Contact Us</h1>
+  <!-- Navbar -->
+  <nav class="glass-nav">
+    <div class="logo">HNG13</div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
 
-    <form id="contact-form" data-testid="test-contact-form" novalidate>
-      <!-- Full Name -->
+  <!-- Contact Form -->
+  <main class="glass-card">
+    <h1 data-testid="test-contact-title">Contact Me</h1>
+
+    <form data-testid="test-contact-form">
       <div class="form-group">
-        <label for="contact-name">Full Name</label>
-        <input
-          type="text"
-          id="contact-name"
-          name="name"
-          required
-          aria-describedby="error-name"
-          data-testid="test-contact-name"
-        />
-        <small id="error-name" class="error-message" data-testid="test-contact-error-name"></small>
+        <label for="name">Full Name</label>
+        <input type="text" id="name" data-testid="test-contact-name" />
+        <div class="error-message" id="error-name" data-testid="test-contact-error-name"></div>
       </div>
 
-      <!-- Email -->
       <div class="form-group">
-        <label for="contact-email">Email Address</label>
-        <input
-          type="email"
-          id="contact-email"
-          name="email"
-          required
-          aria-describedby="error-email"
-          data-testid="test-contact-email"
-        />
-        <small id="error-email" class="error-message" data-testid="test-contact-error-email"></small>
+        <label for="email">Email</label>
+        <input type="email" id="email" data-testid="test-contact-email" />
+        <div class="error-message" id="error-email" data-testid="test-contact-error-email"></div>
       </div>
 
-      <!-- Subject -->
       <div class="form-group">
-        <label for="contact-subject">Subject</label>
-        <input
-          type="text"
-          id="contact-subject"
-          name="subject"
-          required
-          aria-describedby="error-subject"
-          data-testid="test-contact-subject"
-        />
-        <small id="error-subject" class="error-message" data-testid="test-contact-error-subject"></small>
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" data-testid="test-contact-subject" />
+        <div class="error-message" id="error-subject" data-testid="test-contact-error-subject"></div>
       </div>
 
-      <!-- Message -->
       <div class="form-group">
-        <label for="contact-message">Message</label>
-        <textarea
-          id="contact-message"
-          name="message"
-          rows="4"
-          minlength="10"
-          required
-          aria-describedby="error-message"
-          data-testid="test-contact-message"
-        ></textarea>
-        <small id="error-message" class="error-message" data-testid="test-contact-error-message"></small>
+        <label for="message">Message</label>
+        <textarea id="message" data-testid="test-contact-message"></textarea>
+        <div class="error-message" id="error-message" data-testid="test-contact-error-message"></div>
       </div>
 
-      <button type="submit" data-testid="test-contact-submit">Submit</button>
-
-      <!-- Success Message -->
-      <p id="success-msg" class="success-message" data-testid="test-contact-success" hidden>
-        ✅ Message sent successfully!
-      </p>
+      <button type="submit" data-testid="test-contact-submit">Send Message</button>
+      <div class="success-message" data-testid="test-contact-success" hidden></div>
     </form>
-
-    <p><a href="index.html">← Back to Profile</a></p>
   </main>
+
+  <script src="script.js"></script>
 </body>
 </html>

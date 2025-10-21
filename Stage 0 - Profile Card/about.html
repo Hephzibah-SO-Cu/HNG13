@@ -3,55 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="About Me page for Busayo's HNG13 Stage 1 task" />
-  <title>About Me | HNG13 Stage 1 – Busayo</title>
+  <title>About Me</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
 </head>
+<body>
+  <!-- Video Background -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="assets/BG.mp4" type="video/mp4" />
+    <img src="assets/BG.jpg" alt="background" />
+  </video>
 
-<body class="about-page">
-  <main data-testid="test-about-page" class="about-container">
-    <h1>About Me</h1>
+  <!-- Navbar -->
+  <nav class="glass-nav">
+    <div class="logo">HNG13</div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- About Section -->
+  <main class="glass-card">
+    <h1 data-testid="test-about-title">About Me</h1>
 
     <section data-testid="test-about-bio">
       <h2>Bio</h2>
-      <p>
-        I’m Busayo — a frontend developer learning and growing through the HNG13 internship.
-        I love building clean, responsive UIs and exploring creative problem-solving in code.
-      </p>
+      <ul>
+        <li>6"2</li>
+        <li>A Glass of Chocolate Wine</li>
+        <li>Software Developer</li>
+        <li>Creative Director in the making</li>
+      </ul>
     </section>
 
     <section data-testid="test-about-goals">
       <h2>Goals in This Program</h2>
       <ul>
-        <li>Sharpen my frontend fundamentals</li>
+        <li>Sharpen my frontend fundamentals and learn new things</li>
         <li>Build teamwork and collaboration discipline</li>
         <li>Develop production-ready project skills</li>
+        <li>Network with people</li>
+        <li>Have fun, catch cruise, vibe</li>
+        <li>Make the finals</li>
       </ul>
     </section>
 
     <section data-testid="test-about-confidence">
       <h2>Areas of Low Confidence</h2>
       <p>
-        Advanced animations and time-management under pressure — I’m working on improving both.
+        Advanced animations and JavaScript at times <br />
+        Lowkey they're the weapons fashioned against me <br />
+        But I’m working on improving both. <br /><br />
+        Oh also i'm shy.... most times
       </p>
     </section>
 
     <section data-testid="test-about-future-note">
-      <h2>Note to Future Self</h2>
-      <p>
-        Don’t forget how far you’ve come — keep pushing and keep learning no matter the pressure.
-      </p>
+      <h2>Notes to Future Self</h2>
+      <ul>
+        <li>Stay humble</li>
+        <li>Trust God with everything and pray bro</li>
+        <li>Your life is like a garden. So treat everything as such and tend to it as if it were a garden</li>
+        <li>Set goals, work hard, and stay ruthlessly consistent and disciplined</li>
+        <li>Dream more often, delusion is actually a form of planning</li>
+        <li>As often as you can, be kind and give grace to people</li>
+        <li>All the shege (both self inflicted and external) will make sense one day and you'll smile</li>
+        <li>You haven't peaked yet</li>
+      </ul>
     </section>
 
     <section data-testid="test-about-extra">
       <h2>Extra Thoughts</h2>
       <p>
-        HNG13 feels like a sprint and a marathon combined — but that’s exactly why it’s worth it.
+        HNG feels like a sprint and a marathon combined but that’s exactly why it feels like a worthy side quest.
       </p>
     </section>
-
-    <p><a href="index.html">← Back to Profile</a></p>
   </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
