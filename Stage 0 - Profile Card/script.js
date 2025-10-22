@@ -85,4 +85,36 @@ document.addEventListener("DOMContentLoaded", () => {
     // No JS required for now; placeholder for future dynamic behaviors
     console.log("About page loaded");
   }
+
+    // ✅ Background video fallback handling
+  const video = document.getElementById('bg-video');
+  const fallback = document.getElementById('bg-fallback');
+
+  if (video && fallback) {
+    const showFallback = () => {
+      console.warn('Background video failed or stalled — showing fallback.');
+      video.style.display = 'none';
+      fallback.style.display = 'block';
+    };
+
+    // trigger on error or stalled load
+    video.addEventListener('error', showFallback);
+    video.addEventListener('stalled', () => {
+      setTimeout(() => {
+        if (video.readyState < 3) showFallback();
+      }, 1200);
+    });
+
+    // sanity check: if video doesn’t start after 1.5s, fallback
+    setTimeout(() => {
+      if (video.readyState === 0) showFallback();
+    }, 1500);
+
+    // if it eventually plays, hide fallback
+    video.addEventListener('play', () => {
+      fallback.style.display = 'none';
+      video.style.display = '';
+    });
+  }
+
 });
