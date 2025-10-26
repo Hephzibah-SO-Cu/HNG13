@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zolve - Support, Solved</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/styles.css">
+</head>
+<body>
+  <header style="background: #1f2937; color: white; padding: 1rem;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="/index.php"><h2>Zolve</h2></a>
+      <nav class="nav-menu">
+        {% if session.ticketapp_session %}
+          <a href="/dashboard.php" class="nav-link">Dashboard</a>
+          <a href="/tickets.php" class="nav-link">Tickets</a>
+          <a href="/auth/logout.php" class="btn btn-danger">Logout</a>
+        {% else %}
+          <a href="/auth/login.php" class="nav-link">Login</a>
+          <a href="/auth/signup.php" class="nav-link">Signup</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+  {% block content %}{% endblock %}
+  <footer>© 2025 Zolve. All rights reserved.</footer>
+</body>
+</html>

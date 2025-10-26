@@ -1,0 +1,154 @@
+/* shared/styles.css */
+:root {
+  --max-width: 1440px;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --gray: #6b7280;
+  --primary: #6366f1;
+  --bg: #f8fafc;
+  --text: #1f2937;
+  --radius: 12px;
+  --shadow: 0 4px 6px rgba(0,0,0,0.1);
+  --blue: #3b82f6;
+  --yellow: #eab308;
+  --red: #ef4444;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.hero {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: rgb(255, 255, 255);
+  text-align: center;
+  padding: 120px 0 0; /* Reduced bottom padding to avoid button overlap */
+  position: relative;
+  overflow: hidden;
+}
+
+.hero h1 { font-size: 3.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+.hero h2 { font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem; }
+.hero p { font-size: 1.25rem; opacity: 0.9; max-width: 700px; margin: 0 auto 2rem; }
+
+
+.wave { 
+  position: absolute; 
+  bottom: -1px; 
+  left: 0; 
+  width: 100%;
+  height: auto;
+  z-index: 0;
+}
+
+.circle { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.15); pointer-events: none; }
+.circle-1 { width: 320px; height: 320px; top: -80px; right: -60px; }
+.circle-2 { width: 180px; height: 180px; bottom: 20px; left: 5%; }
+
+.card {
+  background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 2rem;
+}
+
+.status { padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.875rem; }
+.status-open { background: #d1fae5; color: var(--green); }
+.status-in_progress { background: #fef3c7; color: var(--amber); }
+.status-closed { background: #e5e7eb; color: var(--gray); }
+
+.priority { padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.875rem; margin-left: 0.5rem; }
+.priority-low { background: #dbeafe; color: var(--blue); }
+.priority-medium { background: #fef9c3; color: var(--yellow); }
+.priority-high { background: #fee2e2; color: var(--red); }
+
+form input, form select, form textarea {
+  width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px;
+}
+
+.btn {
+  padding: 10px 20px; 
+  border: none; 
+  border-radius: 6px; 
+  cursor: pointer; 
+  font-weight: 600; 
+  transition: all 0.2s;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-secondary { background: #6b7280; color: white; }
+.btn-danger { background: var(--red); color: white; }
+
+.nav-link {
+  color: white; 
+  text-decoration: none; 
+  font-weight: 600;
+}
+.nav-link:hover { text-decoration: underline; }
+
+/* ... (keep all previous) */
+
+/* Navbar Updates */
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.hamburger {
+  display: none; /* Hidden on desktop */
+  flex-direction: column;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background: white;
+}
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; } /* Show on mobile */
+  .nav-menu { 
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 60px; /* Below header */
+    right: 0;
+    background: #1f2937;
+    padding: 1rem;
+    border-radius: 0 0 0 8px;
+  }
+  .nav-menu.open { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+    text-align: right; 
+  }
+  .container { padding: 0 1.5rem; margin: 1rem auto; } /* Extra margin on non-desktop */
+}
+
+/* Adjust dashboard/tickets sections for non-desktop margins */
+@media (max-width: 1440px) {
+  .container { margin: 0 2rem; } /* Side margins */
+  .card { margin: 3rem 0; } /* More vertical space */
+}
+
+footer {
+  text-align: center; padding: 2rem; background: #1f2937; color: white; margin-top: 4rem; font-size: 0.9rem;
+}
+
+.ticket-card {
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+@media (max-width: 768px) {
+  .hero { padding: 80px 0 0; } /* Adjust for mobile */
+  .hero h1 { font-size: 2.5rem; }
+  .hero h2 { font-size: 2rem; }
+  .hero p { font-size: 1.1rem; }
+  .ticket-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .container { padding: 0 1.5rem; } /* Slightly more on mobile */
+  .nav-menu { flex-direction: column; gap: 1rem; text-align: right; } /* Stack nav on mobile */
+}
