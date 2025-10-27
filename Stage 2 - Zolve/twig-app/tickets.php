@@ -4,10 +4,15 @@ $loader = new \Twig\Loader\FilesystemLoader('templates');
 $twig = new \Twig\Environment($loader);
 
 session_start();
+// expose session to Twig
+$twig->addGlobal('session', $_SESSION ?? []);
+
 if (!isset($_SESSION['ticketapp_session'])) {
   header('Location: auth/login.php');
   exit;
 }
+
+/* ... rest of your tickets.php unchanged ... */
 
 $file = 'data/tickets.json';
 $tickets = json_decode(file_get_contents($file), true) ?? [];
@@ -15,9 +20,9 @@ $editingTicket = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $title = trim($_POST['title']);
-  $description = $_POST['description'];
-  $status = $_POST['status'];
-  $priority = $_POST['priority'];
+  $description = $_POST['description'] ?? '';
+  $status = $_POST['status'] ?? '';
+  $priority = $_POST['priority'] ?? '';
   $errors = [];
 
   if (!$title) $errors['title'] = "Title is required";
@@ -47,22 +52,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $msg = "Ticket created!";
     }
     file_put_contents($file, json_encode($tickets, JSON_PRETTY_PRINT));
-    // For toasts, use JS alert for simplicity (or add SweetAlert if needed)
-    echo "<script>alert('$msg');</script>";
+    // Use SweetAlert2 (already loaded in base.twig)
+    echo "<script>Swal.fire({icon: 'success', title: 'Success', text: " . json_encode($msg) . "});</script>";
   } else {
-    echo "<script>alert('Please fix errors: " . implode(", ", $errors) . "');</script>";
+    echo "<script>Swal.fire({icon: 'error', title: 'Fix errors', text: " . json_encode(implode(", ", $errors)) . "});</script>";
   }
 }
 
 if (isset($_GET['edit'])) {
-  $editingTicket = array_filter($tickets, fn($t) => $t['id'] == $_GET['edit'])[0] ?? null;
+  $editingTicket = array_values(array_filter($tickets, fn($t) => $t['id'] == $_GET['edit']))[0] ?? null;
 }
 
 if (isset($_GET['delete'])) {
-  $tickets = array_filter($tickets, fn($t) => $t['id'] != $_GET['delete']);
+  $tickets = array_values(array_filter($tickets, fn($t) => $t['id'] != $_GET['delete']));
   file_put_contents($file, json_encode($tickets, JSON_PRETTY_PRINT));
   header('Location: tickets.php');
   exit;
 }
 
-echo $twig->render('tickets.twig', ['tickets' => $tickets, 'editingTicket' => $editingTicket, 'capitalize' => fn($str) => ucwords(str_replace('_', ' ', $str))]);
+echo $twig->render('tickets.twig', ['tickets' => $tickets, 'editingTicket' => $editingTicket]);

@@ -1,0 +1,23 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+  <div class="container" style="padding: 3rem 0; position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+      <h1>Dashboard</h1>
+      <a href="/auth/logout.php"><button class="btn btn-danger">Logout</button></a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+      <div class="card"><h3>Total Tickets</h3><p style="font-size: 2rem; font-weight: bold;">{{ stats.total }}</p></div>
+      <div class="card"><h3>Open</h3><p style="font-size: 2rem; color: var(--green);">{{ stats.open }}</p></div>
+      <div class="card"><h3>In Progress</h3><p style="font-size: 2rem; color: var(--amber);">{{ stats.in_progress }}</p></div>
+      <div class="card"><h3>Closed</h3><p style="font-size: 2rem; color: var(--gray);">{{ stats.closed }}</p></div>
+    </div>
+
+    <a href="/tickets.php" style="display: inline-block;">
+      <button class="btn btn-primary">Manage Tickets →</button>
+    </a>
+    <div class="circle circle-1" style="top: -50px; left: -50px; width: 200px; height: 200px;"></div>
+    <div class="circle circle-2" style="bottom: -50px; right: -50px; width: 150px; height: 150px;"></div>
+  </div>
+{% endblock %}

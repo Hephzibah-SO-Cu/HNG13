@@ -1,0 +1,53 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+  <div class="container" style="padding: 3rem 0; position: relative;">
+    <h1 style="margin-bottom: 3rem;">Ticket Management</h1>
+
+    <div class="card" style="margin: 3rem 0;">
+      <h2>{{ editingTicket ? 'Edit' : 'Create' }} Ticket</h2>
+      <form method="POST">
+        <input name="title" placeholder="Title" value="{{ editingTicket.title ?? '' }}" required>
+        <textarea name="description" placeholder="Description (optional)">{{ editingTicket.description ?? '' }}</textarea>
+        <select name="status">
+          <option value="open" {{ editingTicket.status == 'open' ? 'selected' : '' }}>Open</option>
+          <option value="in_progress" {{ editingTicket.status == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+          <option value="closed" {{ editingTicket.status == 'closed' ? 'selected' : '' }}>Closed</option>
+        </select>
+        <select name="priority">
+          <option value="low" {{ editingTicket.priority == 'low' ? 'selected' : '' }}>Low</option>
+          <option value="medium" {{ editingTicket.priority == 'medium' ? 'selected' : '' }}>Medium</option>
+          <option value="high" {{ editingTicket.priority == 'high' ? 'selected' : '' }}>High</option>
+        </select>
+        {% if editingTicket %}
+          <input type="hidden" name="edit_id" value="{{ editingTicket.id }}">
+        {% endif %}
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+          <button type="submit" class="btn btn-primary">{{ editingTicket ? 'Update' : 'Create' }}</button>
+          {% if editingTicket %}
+            <a href="/tickets.php"><button type="button" class="btn btn-secondary">Cancel</button></a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      {% for ticket in tickets %}
+        <div class="card ticket-card">
+          <div>
+            <h3>{{ ticket.title }}</h3>
+            <p>{{ ticket.description }}</p>
+            <span class="status status-{{ ticket.status }}">{{ ticket.status | replace({'_': ' '}) | capitalize }}</span> {# Fixed capitalize #}
+            <span class="priority priority-{{ ticket.priority }}" style="margin-left: 1rem;">{{ ticket.priority | replace({'_': ' '}) | capitalize }}</span>
+          </div>
+          <div style="display: flex; gap: 1rem;">
+            <a href="/tickets.php?edit={{ ticket.id }}"><button class="btn btn-secondary">Edit</button></a>
+            <a href="/tickets.php?delete={{ ticket.id }}" onclick="return confirm('Delete this ticket?')"><button class="btn btn-danger">Delete</button></a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="circle circle-1" style="top: auto; bottom: -100px; left: -50px; width: 200px; height: 200px;"></div>
+    <div class="circle circle-2" style="top: 50%; right: -50px; width: 150px; height: 150px;"></div>
+  </div>
+{% endblock %}

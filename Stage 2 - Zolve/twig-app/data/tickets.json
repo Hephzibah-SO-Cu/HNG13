@@ -1,1 +1,30 @@
-[]
+[
+    {
+        "id": 1761560272,
+        "title": "First Ticket",
+        "description": "",
+        "status": "open",
+        "priority": "low"
+    },
+    {
+        "id": 1761560291,
+        "title": "Second Ticket",
+        "description": "",
+        "status": "closed",
+        "priority": "medium"
+    },
+    {
+        "id": 1761560313,
+        "title": "Third Ticket",
+        "description": "",
+        "status": "closed",
+        "priority": "high"
+    },
+    {
+        "id": 1761581484,
+        "title": "Fourth Ticket",
+        "description": "",
+        "status": "open",
+        "priority": "high"
+    }
+]

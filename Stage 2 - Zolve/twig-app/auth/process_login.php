@@ -2,12 +2,24 @@
 session_start();
 
 $users = json_decode(file_get_contents('../data/users.json'), true) ?? [];
-$user = array_filter($users, fn($u) => $u['email'] === $_POST['email'] && $u['password'] === $_POST['password']);
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
 
-if ($user) {
-  $_SESSION['ticketapp_session'] = base64_encode($_POST['email']);
-  header('Location: ../dashboard.php');
-} else {
-  header('Location: login.php?error=Invalid email or password');
+$found = null;
+foreach ($users as $u) {
+  if (isset($u['email'], $u['password']) && $u['email'] === $email && $u['password'] === $password) {
+    $found = $u;
+    break;
+  }
 }
-exit;
+
+if ($found) {
+  // Store a session token (you can replace with a better token if desired)
+  $_SESSION['ticketapp_session'] = base64_encode($found['email']);
+  header('Location: ../dashboard.php');
+  exit;
+} else {
+  // redirect back to login page in auth folder with an error
+  header('Location: login.php?error=Invalid email or password');
+  exit;
+}
