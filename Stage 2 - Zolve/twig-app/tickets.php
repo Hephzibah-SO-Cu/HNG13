@@ -12,9 +12,15 @@ if (!isset($_SESSION['ticketapp_session'])) {
   exit;
 }
 
+// derive current user email from the base64 session token
+$userEmail = isset($_SESSION['ticketapp_session']) ? base64_decode($_SESSION['ticketapp_session']) : null;
+
 $file = 'data/tickets.json';
-$tickets = json_decode(file_get_contents($file), true) ?? [];
+$allTickets = json_decode(file_get_contents($file), true) ?? [];
 $editingTicket = null;
+
+// only show tickets owned by this user (tickets without owner are hidden)
+$tickets = array_values(array_filter($allTickets, fn($t) => isset($t['owner']) && $t['owner'] === $userEmail));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $title = trim($_POST['title'] ?? '');
@@ -29,35 +35,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if (empty($errors)) {
     if (isset($_POST['edit_id']) && $_POST['edit_id'] !== '') {
-      // update existing ticket
-      foreach ($tickets as &$t) {
-        if ($t['id'] == $_POST['edit_id']) {
+      // update existing ticket: ensure owner match
+      $editId = $_POST['edit_id'];
+      $updated = false;
+      foreach ($allTickets as &$t) {
+        if ($t['id'] == $editId) {
+          if (!isset($t['owner']) || $t['owner'] !== $userEmail) {
+            $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Unauthorized', 'text' => 'You cannot edit this ticket.'];
+            header('Location: tickets.php');
+            exit;
+          }
           $t['title'] = $title;
           $t['description'] = $description;
           $t['status'] = $status;
           $t['priority'] = $priority;
+          $updated = true;
           break;
         }
       }
-      // save and flash
-      if (file_put_contents($file, json_encode($tickets, JSON_PRETTY_PRINT)) === false) {
-        $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Save failed', 'text' => 'Could not save updated ticket. Check file permissions.'];
+      if ($updated) {
+        if (file_put_contents($file, json_encode($allTickets, JSON_PRETTY_PRINT)) === false) {
+          $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Save failed', 'text' => 'Could not save updated ticket. Check file permissions.'];
+        } else {
+          $_SESSION['flash'] = ['icon' => 'success', 'title' => 'Ticket updated', 'text' => 'Ticket updated successfully.'];
+        }
       } else {
-        $_SESSION['flash'] = ['icon' => 'success', 'title' => 'Ticket updated', 'text' => 'Ticket updated successfully.'];
+        $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Not found', 'text' => 'Ticket not found.'];
       }
       header('Location: tickets.php');
       exit;
     } else {
-      // create new ticket
+      // create new ticket with owner
       $new = [
         'id' => time(),
         'title' => $title,
         'description' => $description,
         'status' => $status,
-        'priority' => $priority
+        'priority' => $priority,
+        'owner' => $userEmail
       ];
-      $tickets[] = $new;
-      if (file_put_contents($file, json_encode($tickets, JSON_PRETTY_PRINT)) === false) {
+      $allTickets[] = $new;
+      if (file_put_contents($file, json_encode($allTickets, JSON_PRETTY_PRINT)) === false) {
         $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Save failed', 'text' => 'Could not save new ticket. Check file permissions.'];
       } else {
         $_SESSION['flash'] = ['icon' => 'success', 'title' => 'Ticket created', 'text' => 'Ticket created successfully.'];
@@ -66,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       exit;
     }
   } else {
-    // validation errors -> flash and redirect back to editing (if edit_id present) or tickets page
+    // validation errors -> show flash
     $errText = implode(", ", $errors);
     $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Fix errors', 'text' => $errText];
 
@@ -80,22 +98,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-// handle edit pre-fill
+// handle edit pre-fill: ensure ticket belongs to user
 if (isset($_GET['edit'])) {
-  $editingTicket = array_values(array_filter($tickets, fn($t) => $t['id'] == $_GET['edit']))[0] ?? null;
+  $candidate = array_values(array_filter($allTickets, fn($t) => $t['id'] == $_GET['edit']))[0] ?? null;
+  if ($candidate && isset($candidate['owner']) && $candidate['owner'] === $userEmail) {
+    $editingTicket = $candidate;
+  } else {
+    // not allowed to edit others' tickets
+    $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Unauthorized', 'text' => 'Cannot edit that ticket.'];
+    header('Location: tickets.php');
+    exit;
+  }
 }
 
-// handle delete
+// handle delete: ensure owner match
 if (isset($_GET['delete'])) {
-  $tickets = array_values(array_filter($tickets, fn($t) => $t['id'] != $_GET['delete']));
-  file_put_contents($file, json_encode($tickets, JSON_PRETTY_PRINT));
-  // flash delete success and redirect to avoid resubmission
-  $_SESSION['flash'] = ['icon' => 'success', 'title' => 'Deleted', 'text' => 'Ticket deleted successfully.'];
-  header('Location: tickets.php');
-  exit;
+  $delId = $_GET['delete'];
+  $found = array_values(array_filter($allTickets, fn($t) => $t['id'] == $delId))[0] ?? null;
+  if ($found && isset($found['owner']) && $found['owner'] === $userEmail) {
+    $allTickets = array_values(array_filter($allTickets, fn($t) => $t['id'] != $delId));
+    file_put_contents($file, json_encode($allTickets, JSON_PRETTY_PRINT));
+    $_SESSION['flash'] = ['icon' => 'success', 'title' => 'Deleted', 'text' => 'Ticket deleted successfully.'];
+    header('Location: tickets.php');
+    exit;
+  } else {
+    $_SESSION['flash'] = ['icon' => 'error', 'title' => 'Unauthorized', 'text' => 'Cannot delete that ticket.'];
+    header('Location: tickets.php');
+    exit;
+  }
 }
 
-// grab flash (if any) and clear it for the next request
+// recompute visible tickets for rendering (fresh after edits)
+$tickets = array_values(array_filter($allTickets, fn($t) => isset($t['owner']) && $t['owner'] === $userEmail));
+
+// grab flash (if any) and clear
 $flash = $_SESSION['flash'] ?? null;
 if (isset($_SESSION['flash'])) unset($_SESSION['flash']);
 
