@@ -1,19 +1,27 @@
-# Use official PHP Apache image
+# Use official PHP 8.2 Apache image
 FROM php:8.2-apache
 
-# Install necessary extensions (if you ever need more, add here)
-RUN docker-php-ext-install pdo pdo_mysql
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql
 
 # Enable Apache rewrite
 RUN a2enmod rewrite
 
-# Copy all files to web root
-COPY . /var/www/html/
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www/html/
+# Copy app files
+WORKDIR /var/www/html
+COPY . .
 
-# Expose default HTTP port
+# Install PHP dependencies (Twig etc.)
+RUN composer install --no-dev --optimize-autoloader
+
+# Expose port 80
 EXPOSE 80
 
 # Start Apache
