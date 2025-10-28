@@ -1,28 +1,37 @@
-# Use official PHP 8.2 Apache image
-FROM php:8.2-apache
+# Stage 0: base php + apache
+FROM php:8.2-apache AS base
 
-# Install system dependencies
+# Install system deps we need for building extensions and composer packages
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql
+    zip \
+    && docker-php-ext-install pdo pdo_mysql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Enable Apache rewrite
+# Enable Apache rewrite (for pretty URLs if needed)
 RUN a2enmod rewrite
 
-# Install Composer
+# Copy composer (multi-stage from official composer image)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy app files
 WORKDIR /var/www/html
+
+# Copy only composer files first so layer caching can help builds
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies (run in this layer so vendor is created here)
+RUN composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction --no-progress || composer install --no-interaction
+
+# Now copy the rest of the app
 COPY . .
 
-# Install PHP dependencies (Twig etc.)
-RUN composer install --no-dev --optimize-autoloader
+# Ensure autoload is optimized (safe to run again after copy)
+RUN composer dump-autoload --optimize
 
-# Expose port 80
+# Fix permissions for runtime (simple, for Render)
+RUN chown -R www-data:www-data /var/www/html || true
+
 EXPOSE 80
-
-# Start Apache
 CMD ["apache2-foreground"]
