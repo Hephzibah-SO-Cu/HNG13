@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Landing from './pages/Landing';
 import Login from './pages/auth/Login';
@@ -7,7 +7,6 @@ import Dashboard from './pages/Dashboard';
 import Tickets from './pages/Tickets';
 import { isAuthenticated, logout } from './utils/auth';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
 
 function ProtectedRoute({ children }) {
   if (!isAuthenticated()) {
@@ -20,6 +19,7 @@ function ProtectedRoute({ children }) {
 function Navbar() {
   const [auth, setAuth] = useState(isAuthenticated());
   const [menuOpen, setMenuOpen] = useState(false); // For hamburger
+  const navigate = useNavigate(); // <--- added
 
   useEffect(() => {
     const checkAuth = () => setAuth(isAuthenticated());
@@ -38,6 +38,8 @@ function Navbar() {
     logout();
     setAuth(false);
     toast.success('Logged out successfully');
+    setMenuOpen(false);
+    navigate('/'); // <--- navigate back to landing immediately
   };
 
   return (
@@ -54,7 +56,7 @@ function Navbar() {
             <>
               <Link to="/dashboard" className="nav-link" onClick={() => setMenuOpen(false)}>Dashboard</Link>
               <Link to="/tickets" className="nav-link" onClick={() => setMenuOpen(false)}>Tickets</Link>
-              <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="btn btn-danger">Logout</button>
+              <button onClick={handleLogout} className="btn btn-danger">Logout</button>
             </>
           ) : (
             <>
