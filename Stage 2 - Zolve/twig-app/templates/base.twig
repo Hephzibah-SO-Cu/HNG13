@@ -96,7 +96,37 @@
   })();
 </script>
 
-
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('form[method="POST"]');
+  if (!form) return;
+  const title = form.querySelector('[name="title"]');
+  const status = form.querySelector('[name="status"]');
+  const desc = form.querySelector('[name="description"]');
+  const ensureErrorEl = (el) => {
+    let e = el.parentNode.querySelector('.inline-err');
+    if (!e) { e = document.createElement('div'); e.className='inline-err'; e.style.color='red'; e.style.fontSize='0.9rem'; el.parentNode.appendChild(e); }
+    return e;
+  };
+  form.addEventListener('submit', (e) => {
+    let ok = true;
+    // title
+    const titleErr = ensureErrorEl(title);
+    if (!title.value.trim()) { titleErr.textContent = 'Title is required.'; ok=false; } else { titleErr.textContent=''; }
+    // status
+    const allowed = ['open','in_progress','closed'];
+    const statusErr = ensureErrorEl(status);
+    if (!allowed.includes(status.value)) { statusErr.textContent = 'Invalid status.'; ok=false; } else { statusErr.textContent=''; }
+    // description length
+    const descErr = ensureErrorEl(desc);
+    if (desc.value && desc.value.length > 500) { descErr.textContent = 'Description must be <= 500 characters.'; ok=false; } else { descErr.textContent=''; }
+    if (!ok) {
+      e.preventDefault();
+      try { Swal.fire({ icon:'error', title:'Fix form errors', text:'Please fix highlighted fields.' }); } catch(_) {}
+    }
+  });
+});
+</script>
 
 </body>
 </html>
