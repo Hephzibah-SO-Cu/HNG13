@@ -63,18 +63,15 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       try {
-        // Use JSON encoding to guarantee valid JS strings
         Swal.fire({
-          icon: {{ flash.icon|json_encode }},
-          title: {{ flash.title|json_encode }},
-          text: {{ flash.text|json_encode }}
+          icon: {{ flash.icon|json_encode|raw }},
+          title: {{ flash.title|json_encode|raw }},
+          text: {{ flash.text|json_encode|raw }}
         });
       } catch (e) {
-        // fallback to alert with safe JSON-encoded string
         try {
-          alert({{ (flash.title ~ "\n" ~ flash.text)|json_encode }});
+          alert({{ (flash.title ~ "\n" ~ flash.text)|json_encode|raw }});
         } catch (e2) {
-          // last resort: no-op
           console && console.error && console.error('Flash display failed', e2);
         }
       }
@@ -86,8 +83,8 @@
 <script>
   (function(){
     try {
-      // Use json encoding so the token is a valid JS string or null
-      const serverToken = {{ session.ticketapp_session ? session.ticketapp_session|json_encode : 'null' }};
+      // Use json_encode|raw so Twig doesn't HTML-escape the quotes
+      const serverToken = {{ (session.ticketapp_session is defined and session.ticketapp_session) ? session.ticketapp_session|json_encode|raw : 'null' }};
       if (serverToken) {
         try { localStorage.setItem('ticketapp_session', serverToken); } catch(e) { /* storage blocked */ }
       } else {
@@ -98,6 +95,7 @@
     }
   })();
 </script>
+
 
 
 </body>
