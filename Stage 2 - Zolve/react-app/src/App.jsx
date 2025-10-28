@@ -23,8 +23,15 @@ function Navbar() {
 
   useEffect(() => {
     const checkAuth = () => setAuth(isAuthenticated());
+
+    // storage fires only on other tabs; authchange fires in same tab
     window.addEventListener('storage', checkAuth);
-    return () => window.removeEventListener('storage', checkAuth);
+    window.addEventListener('authchange', checkAuth);
+
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      window.removeEventListener('authchange', checkAuth);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -36,7 +43,7 @@ function Navbar() {
   return (
     <header style={{ background: '#1f2937', color: 'white', padding: '1rem' }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link to="/"><h2>Zolve</h2></Link>
+        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}><h2>Zolve</h2></Link>
         <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
           <div></div>
           <div></div>

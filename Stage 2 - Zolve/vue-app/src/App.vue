@@ -29,7 +29,7 @@ onMounted(() => {
 <template>
   <header style="background: #1f2937; color: white; padding: 1rem;">
     <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-      <router-link to="/"><h2>Zolve</h2></router-link>
+      <router-link to="/" style="color: white; text-decoration: none;"><h2>Zolve</h2></router-link>
       <div class="hamburger" @click="menuOpen = !menuOpen">
         <div></div>
         <div></div>

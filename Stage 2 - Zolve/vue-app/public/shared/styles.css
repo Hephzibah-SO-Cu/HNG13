@@ -132,7 +132,7 @@ form input, form select, form textarea {
   .nav-menu {
     display: none; 
     position: absolute;
-    top: calc(100% + 8px);
+    top: 5rem;
     right: 1rem;
     background: #1f2937;
     padding: 1rem;

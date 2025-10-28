@@ -1,43 +1,41 @@
 # Zolve — Ticket Management (Twig / PHP implementation)
 
-**What this is**  
+## Live Demo
+Deployed: https://hng-13-stage-2-twigapp-busayo.onrender.com/
+
+## What this is  
 A complete Ticket Management frontend implementation using Twig templates + PHP.  
 This repository is part of the HNG13 Frontend Stage 2 multi-framework task (React, Vue, Twig). This folder contains the **Twig** implementation.
 
 ---
 
-## Live / Test credentials
-Live site: https://hng-13-stage-2-twigapp-busayo.onrender.com/
-
+## Example test accounts
 You can use the example users already in `data/users.json`:
-
 - **admin@zolve.com** / **zolveadmin**  
 - **admin2@zolve.com** / **admin2zolve**
-
-(These are mock accounts stored in `data/users.json` for the assignment.)
 
 ---
 
 ## Features implemented
-- Landing page with wave hero, decorative circles, and CTA buttons.
-- Login & Signup pages with server-side validation and SweetAlert flash notifications.
-- Dashboard with ticket statistics (Total, Open, In Progress, Closed).
-- Ticket Management (Create / Read / Update / Delete) with:
-  - Server-side validation (title & status mandatory),
-  - Status values strictly limited to: `open`, `in_progress`, `closed`,
-  - Priority handling: `low`, `medium`, `high`,
-  - SweetAlert success/error toasts (flash messages).
-- Protected routes: Dashboard and Tickets pages require an active session.
-- Design rules: max width 1440px, card-based layout, status color mapping, responsive behavior.
+- Landing page with wave hero, decorative circles, and CTAs
+- Login & Signup with server-side validation and SweetAlert flashes
+- Dashboard with ticket statistics (Total / Open / In Progress / Closed)
+- Ticket Management (Create / Read / Update / Delete) with server-side validation:
+  - `title` and `status` required
+  - `status` limited to `open`, `in_progress`, `closed`
+  - `priority`: `low`, `medium`, `high`
+- Protected routes: Dashboard and Tickets require an active session
+- Responsive layout, max width 1440px, accessible-ish markup
 
 ---
 
 ## Tech stack
-- PHP (built-in server for dev)
+- PHP (recommended 7.4+)
 - Twig (templating)
-- SweetAlert2 (toast / modals)
-- Plain CSS (shared/styles.css)
-- Data persistence: local JSON files (`data/users.json`, `data/tickets.json`) for the mock backend
+- Composer
+- SweetAlert2 (for flash messages)
+- Plain CSS (`shared/styles.css`)
+- Mock persistence: JSON files (`data/users.json`, `data/tickets.json`)
 
 ---
 
@@ -72,10 +70,9 @@ twig-app/
 ---
 
 ## Setup & Local Development
-
 **Prerequisites**
-- PHP 7.4+ recommended (code will work with older versions but Composer/Twig may require >=5.6)
-- [Composer](https://getcomposer.org/) installed
+- PHP 7.4+ 
+- Composer
 
 **Run locally**
 1. From project root (where `composer.json` lives), install deps:
@@ -98,3 +95,8 @@ The app reads/writes data/users.json and data/tickets.json. Make sure the PHP pr
 ```bash
     chmod 666 data/*.json
 ```
+
+## Notes
+
+- This implementation uses JSON files as a mock backend — fine for the task but not production.
+- If you want per-user separation for tickets, the JSON schema can be changed or a real backend adde

@@ -1,12 +1,33 @@
-const STORAGE_KEY = 'zolve_tickets';
+// vue-app/src/utils/tickets.js
+const SESSION_KEY = 'ticketapp_session';
+
+/**
+ * Tickets are stored per-user in sessionStorage under key:
+ *   zolve_tickets_<b64(email)>
+ *
+ * This prevents a global 'zolve_tickets' key appearing in localStorage.
+ * sessionStorage chosen so only the current browser tab retains them (cleared on close).
+ */
+
+const getUserStorageKey = () => {
+  const token = localStorage.getItem(SESSION_KEY);
+  if (!token) return null;
+  // token is btoa(email)
+  const email = atob(token);
+  return `zolve_tickets_${btoa(email)}`;
+};
 
 export const getTickets = () => {
-  const data = localStorage.getItem(STORAGE_KEY);
+  const key = getUserStorageKey();
+  if (!key) return [];
+  const data = sessionStorage.getItem(key);
   return data ? JSON.parse(data) : [];
 };
 
 export const saveTickets = (tickets) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+  const key = getUserStorageKey();
+  if (!key) return;
+  sessionStorage.setItem(key, JSON.stringify(tickets));
 };
 
 export const validateTicket = (ticket) => {

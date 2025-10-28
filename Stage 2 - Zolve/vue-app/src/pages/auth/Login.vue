@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { login } from '../../utils/auth'
 import { useToast } from 'vue-toastification'
@@ -32,6 +32,20 @@ const handleSubmit = () => {
     errors.value.general = result.error
   }
 }
+
+// Show auth notice set by router guard (if any)
+onMounted(() => {
+  try {
+    const raw = localStorage.getItem('auth_notice')
+    if (raw) {
+      const obj = JSON.parse(raw)
+      if (obj && obj.message) {
+        toast.error(obj.message)
+      }
+      localStorage.removeItem('auth_notice')
+    }
+  } catch (e) { /* ignore */ }
+})
 </script>
 
 <template>
