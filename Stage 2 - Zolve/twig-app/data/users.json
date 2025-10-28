@@ -2,5 +2,13 @@
     {
         "email": "admin@zolve.com",
         "password": "zolveadmin"
+    },
+    {
+        "email": "admin2@zolve.com",
+        "password": "admin2zolve"
+    },
+    {
+        "email": "testuser@zolve.com",
+        "password": "testuser"
     }
 ]

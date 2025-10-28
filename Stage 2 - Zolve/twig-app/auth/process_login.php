@@ -14,12 +14,23 @@ foreach ($users as $u) {
 }
 
 if ($found) {
-  // Store a session token (you can replace with a better token if desired)
+  // set session token
   $_SESSION['ticketapp_session'] = base64_encode($found['email']);
+  // set flash message for the next page render
+  $_SESSION['flash'] = [
+    'icon' => 'success',
+    'title' => 'Logged in',
+    'text' => 'Welcome back!'
+  ];
   header('Location: ../dashboard.php');
   exit;
 } else {
-  // redirect back to login page in auth folder with an error
-  header('Location: login.php?error=Invalid email or password');
+  $_SESSION['flash'] = [
+    'icon' => 'error',
+    'title' => 'Login failed',
+    'text' => 'Invalid email or password.'
+  ];
+  // redirect back to login (relative path)
+  header('Location: login.php');
   exit;
 }

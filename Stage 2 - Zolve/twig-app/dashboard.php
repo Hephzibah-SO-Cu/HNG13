@@ -12,6 +12,9 @@ if (!isset($_SESSION['ticketapp_session'])) {
   exit;
 }
 
+$flash = $_SESSION['flash'] ?? null;
+if (isset($_SESSION['flash'])) unset($_SESSION['flash']);
+
 $tickets = json_decode(file_get_contents('data/tickets.json'), true) ?? [];
 $stats = [
   'total' => count($tickets),
@@ -20,4 +23,4 @@ $stats = [
   'closed' => count(array_filter($tickets, fn($t) => $t['status'] === 'closed'))
 ];
 
-echo $twig->render('dashboard.twig', ['stats' => $stats]);
+echo $twig->render('dashboard.twig', ['stats' => $stats, 'flash' => $flash]);

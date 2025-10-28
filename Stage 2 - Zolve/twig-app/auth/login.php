@@ -12,6 +12,8 @@ if (isset($_SESSION['ticketapp_session'])) {
   exit;
 }
 
-$error = isset($_GET['error']) ? $_GET['error'] : '';
+// use flash instead of GET param
+$flash = $_SESSION['flash'] ?? null;
+if (isset($_SESSION['flash'])) unset($_SESSION['flash']);
 
-echo $twig->render('auth/login.twig', ['error' => $error]);
+echo $twig->render('auth/login.twig', ['error' => '', 'flash' => $flash]);
