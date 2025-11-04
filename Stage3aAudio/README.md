@@ -8,17 +8,12 @@ The application is built using Next.js (App Router), TypeScript, and Tailwind CS
 Deployed to: https://hng-13-stage-3a-audiophile.vercel.app/
 
 ## Features
-Fully Responsive Design: A pixel-perfect implementation of the Figma design across mobile, tablet, and desktop breakpoints.
-
-Dynamic Pages: All category and product detail pages are dynamically rendered using Next.js dynamic routing and a centralized data store.
-
-Global Cart Management: A persistent, site-wide cart state (built with React Context) that allows users to add, remove, and update item quantities.
-
-Full Checkout Flow: A multi-step form with comprehensive client-side validation using react-hook-form and zod.
-
-Persistent Backend: All successful orders are saved to a Convex database in real-time.
-
-Transactional Emails: Automatic order confirmation emails are sent to the user upon successful checkout using a Convex action and the Resend API.
+- Fully Responsive Design: A pixel-perfect implementation of the Figma design across mobile, tablet, and desktop breakpoints.
+- Dynamic Pages: All category and product detail pages are dynamically rendered using Next.js dynamic routing and a centralized data store.
+- Global Cart Management: A persistent, site-wide cart state (built with React Context) that allows users to add, remove, and update item quantities.
+- Full Checkout Flow: A multi-step form with comprehensive client-side validation using react-hook-form and zod.
+- Persistent Backend: All successful orders are saved to a Convex database in real-time.
+- Transactional Emails: Automatic order confirmation emails are sent to the user upon successful checkout using a Convex action and the Resend API.
 
 ## Tech Stack
 - Frontend: Next.js (App Router), React, TypeScript
@@ -60,7 +55,7 @@ Once complete, npx convex dev will output your project's URL. Copy this URL. It 
 
 You must set variables in two separate places for the application to function.
 
-## A. Local Frontend (.env.local)
+A. Local Frontend (.env.local)
 
 Create a file named .env.local in the root of your project. This file is for your Next.js frontend.
 
@@ -68,7 +63,7 @@ Get this URL from the `npx convex dev` command
 NEXT_PUBLIC_CONVEX_URL="[https://your-project-name.convex.cloud](https://your-project-name.convex.cloud)"
 
 
-## B. Convex Dashboard (Backend)
+B. Convex Dashboard (Backend)
 
 Your Convex backend needs its own environment variables to send emails.
 
