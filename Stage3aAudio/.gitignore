@@ -1,2 +1,11 @@
 
 .env.local
+.next
+/.next/
+/out/
+/node_modules
+/.convex/
+/convex/node_modules/
+/convex/.convex/
+.DS_Store
+*.pem
