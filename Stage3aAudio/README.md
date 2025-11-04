@@ -91,16 +91,16 @@ Your Convex backend needs its own environment variables to send emails.
     You will need two terminals running simultaneously.
 
     Terminal 1 (Backend):
-    ```bash
+ ```bash
     npx convex dev
-    ```
+ ```
 
     (Leave this running. It syncs your database schema and functions.)
 
     Terminal 2 (Frontend):
-    ```bash
+```bash
     npm run dev
-    ```
+```
     Open http://localhost:3000 in your browser to view the live application.
 
 ## Important Note on Email Submission
