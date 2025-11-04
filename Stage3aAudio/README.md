@@ -5,7 +5,7 @@ This is a full-stack, pixel-perfect e-commerce website built as a submission for
 The application is built using Next.js (App Router), TypeScript, and Tailwind CSS on the frontend, with Convex as the backend for database and serverless functions, and Resend for handling transactional emails.
 
 ## Live Demo
-[Link to the deployed application on Vercel/Netlify]
+Deployed to: https://hng-13-stage-3a-audiophile.vercel.app/
 
 ## Features
 Fully Responsive Design: A pixel-perfect implementation of the Figma design across mobile, tablet, and desktop breakpoints.
@@ -32,12 +32,9 @@ Transactional Emails: Automatic order confirmation emails are sent to the user u
 Follow these instructions to get the project running locally.
 
 1. Prerequisites
-
-Node.js (v18 or later)
-
-An account with Convex
-
-A free account with Resend
+    - Node.js (v18 or later)
+    - An account with Convex
+    - A free account with Resend
 
 2. Clone the Repository
 
@@ -51,19 +48,19 @@ npm install
 
 4. Link to Convex
 
-Run the Convex "dev" command to link your local project to your Convex account.
+    Run the Convex "dev" command to link your local project to your Convex account.
 
 ``` bash
 npx convex dev
 ```
 
-Follow the prompts in your terminal. This will log you in and guide you to create a new project.
+    Follow the prompts in your terminal. This will log you in and guide you to create a new project.
 
-Once complete, npx convex dev will output your project's URL. Copy this URL. It will look like https://your-project-name.convex.cloud.
+    Once complete, npx convex dev will output your project's URL. Copy this URL. It will look like https://your-project-name.convex.cloud.
 
 5. Configure Environment Variables
 
-You must set variables in two separate places for the application to function.
+    You must set variables in two separate places for the application to function.
 
 ## A. Local Frontend (.env.local)
 
@@ -77,49 +74,36 @@ NEXT_PUBLIC_CONVEX_URL="[https://your-project-name.convex.cloud](https://your-pr
 
 Your Convex backend needs its own environment variables to send emails.
 
-Go to your Convex project's dashboard.
-
-Navigate to Settings > Environment Variables.
-
-Add the following two variables:
-
-Variable Name
-
-Value
-
-Notes
-
-RESEND_API_KEY
-
-re_...
-
-Your API key from your Resend account.
-
-CONVEX_URL
-
-https://your-project-name.convex.cloud
-
-The same URL from Step 4.
+- Go to your Convex project's dashboard.
+- Navigate to Settings > Environment Variables.
+- Add the following two variables:
+    Variable Name
+    Value
+- Notes
+    RESEND_API_KEY
+    re_... (Your API key from your Resend account.)
+    
+    CONVEX_URL
+    https://your-project-name.convex.cloud (The same URL from Step 4.)
 
 6. Run the Application
 
-You will need two terminals running simultaneously.
+    You will need two terminals running simultaneously.
 
-Terminal 1 (Backend):
-```bash
-npx convex dev
-```
+    Terminal 1 (Backend):
+    ```bash
+    npx convex dev
+    ```
 
-(Leave this running. It syncs your database schema and functions.)
+    (Leave this running. It syncs your database schema and functions.)
 
-Terminal 2 (Frontend):
-```bash
-npm run dev
-```
+    Terminal 2 (Frontend):
+    ```bash
+    npm run dev
+    ```
+    Open http://localhost:3000 in your browser to view the live application.
 
-Open http://localhost:3000 in your browser to view the live application.
-
-Important Note on Email Submission
+## Important Note on Email Submission
 
 This project successfully integrates the Resend API for sending transactional emails.
 
@@ -132,6 +116,4 @@ Expected "Failure": If you use any other email address (e.g., test@gmail.com), t
 Production Path: To send emails to any user, a custom domain must be purchased and verified through the Resend dashboard.
 
 ## Submission Artifacts
-Live Deployed App:
-
 Confirmation Email Template: The HTML email template is located at email/ConfirmationEmail.tsx. (Note: The final implementation in convex/email.ts builds an HTML string for server-side compatibility, but this file serves as the required template).
