@@ -42,25 +42,24 @@ Follow these instructions to get the project running locally.
 
 Install all required npm packages:
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
 4. Link to Convex
 
-    Run the Convex "dev" command to link your local project to your Convex account.
+ Run the Convex "dev" command to link your local project to your Convex account.
 
-``` bash
-npx convex dev
-```
+    ``` bash
+    npx convex dev
+    ```
+Follow the prompts in your terminal. This will log you in and guide you to create a new project.
 
-    Follow the prompts in your terminal. This will log you in and guide you to create a new project.
-
-    Once complete, npx convex dev will output your project's URL. Copy this URL. It will look like https://your-project-name.convex.cloud.
+Once complete, npx convex dev will output your project's URL. Copy this URL. It will look like https://your-project-name.convex.cloud.
 
 5. Configure Environment Variables
 
-    You must set variables in two separate places for the application to function.
+You must set variables in two separate places for the application to function.
 
 ## A. Local Frontend (.env.local)
 
@@ -77,30 +76,31 @@ Your Convex backend needs its own environment variables to send emails.
 - Go to your Convex project's dashboard.
 - Navigate to Settings > Environment Variables.
 - Add the following two variables:
-    Variable Name
-    Value
+    - Variable Name
+    - Value
 - Notes
-    RESEND_API_KEY
-    re_... (Your API key from your Resend account.)
+    - RESEND_API_KEY
+    - re_... (Your API key from your Resend account.)
     
     CONVEX_URL
     https://your-project-name.convex.cloud (The same URL from Step 4.)
 
 6. Run the Application
 
-    You will need two terminals running simultaneously.
+You will need two terminals running simultaneously.
 
-    Terminal 1 (Backend):
- ```bash
+Terminal 1 (Backend):
+
+    ```bash
     npx convex dev
- ```
+    ```
+(Leave this running. It syncs your database schema and functions.)
 
-    (Leave this running. It syncs your database schema and functions.)
+Terminal 2 (Frontend):
 
-    Terminal 2 (Frontend):
-```bash
+    ```bash
     npm run dev
-```
+    ```
     Open http://localhost:3000 in your browser to view the live application.
 
 ## Important Note on Email Submission
