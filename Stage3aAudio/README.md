@@ -41,18 +41,17 @@ Follow these instructions to get the project running locally.
 3. Install Dependencies
 
 Install all required npm packages:
-
-    ```bash
+```bash
     npm install
-    ```
+```
 
 4. Link to Convex
 
  Run the Convex "dev" command to link your local project to your Convex account.
-
-    ``` bash
+ ``` bash
     npx convex dev
-    ```
+ ```
+
 Follow the prompts in your terminal. This will log you in and guide you to create a new project.
 
 Once complete, npx convex dev will output your project's URL. Copy this URL. It will look like https://your-project-name.convex.cloud.
@@ -90,30 +89,32 @@ Your Convex backend needs its own environment variables to send emails.
 You will need two terminals running simultaneously.
 
 Terminal 1 (Backend):
-
-    ```bash
+```bash
     npx convex dev
-    ```
+ ```
 (Leave this running. It syncs your database schema and functions.)
 
 Terminal 2 (Frontend):
-
-    ```bash
+```bash
     npm run dev
-    ```
-    Open http://localhost:3000 in your browser to view the live application.
+```
+
+Open http://localhost:3000 in your browser to view the live application.
 
 ## Important Note on Email Submission
 
-This project successfully integrates the Resend API for sending transactional emails.
+- This project successfully integrates the Resend API for sending transactional emails.
 
-Per Resend's free tier security policy, emails can only be sent to the single, verified email address associated with your Resend account (the email you used to sign up).
+- Per Resend's free tier security policy, emails can only be sent to the single, verified email address associated with your Resend account (the email you used to sign up).
 
-To Test: Complete the checkout process using your own verified Resend email address. The order will save to Convex, and you will receive a confirmation email.
+- To Test: Complete the checkout process using your own verified Resend email address. The order will save to Convex, and you will receive a confirmation email.
 
-Expected "Failure": If you use any other email address (e.g., test@gmail.com), the app will still work, the order will be saved, but Resend will return a 403 error in your terminal. This is the expected behavior for an unverified domain.
+- Expected "Failure": If you use any other email address (e.g., test@gmail.com), the app will still work, the order will be saved, but Resend will return a 403 error in your terminal. This is the expected behavior for an unverified domain.
 
-Production Path: To send emails to any user, a custom domain must be purchased and verified through the Resend dashboard.
+- Production Path: To send emails to any user, a custom domain must be purchased and verified through the Resend dashboard.
 
 ## Submission Artifacts
-Confirmation Email Template: The HTML email template is located at email/ConfirmationEmail.tsx. (Note: The final implementation in convex/email.ts builds an HTML string for server-side compatibility, but this file serves as the required template).
+Confirmation Email Template:
+The HTML email template is located at email/ConfirmationEmail.tsx. 
+
+(Note: The final implementation in convex/email.ts builds an HTML string for server-side compatibility, but this file serves as the required template).
