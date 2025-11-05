@@ -1,54 +1,60 @@
 // components/TodoInput.tsx
-import React, { useState } from "react";
-import styled from "styled-components/native";
-import { TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, TextInput, StyleSheet } from "react-native";
+import { useTheme } from "@/context/ThemeContext";
+import { useState } from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-const Row = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 12px;
-`;
+export default function TodoInput() {
+  const { colors } = useTheme();
+  const [text, setText] = useState("");
+  const addTodo = useMutation(api.todos.add);
 
-const Input = styled.TextInput`
-  flex: 1;
-  height: 42px;
-  background-color: ${(p) => (p.theme.colors.panel as string)};
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-family: ${(p) => p.theme.fonts.body as string};
-  font-size: ${(p) => p.theme.sizes.body}px;
-  color: ${(p) => p.theme.colors.text as string};
-  border: 1px solid ${(p) => p.theme.colors.border as string};
-`;
-
-type Props = {
-  placeholder?: string;
-  onSubmit: (payload: { title: string }) => Promise<void> | void;
-};
-
-export default function TodoInput({ onSubmit, placeholder = "Create a new todo..." }: Props) {
-  const [value, setValue] = useState("");
-
-  async function submit() {
-    if (!value.trim()) return;
-    await onSubmit({ title: value.trim() });
-    setValue("");
-  }
+  const handleAddTodo = () => {
+    if (text.trim().length > 0) {
+      addTodo({ text: text.trim() });
+      setText("");
+    }
+  };
 
   return (
-    <Row>
-      <Input
-        placeholder={placeholder}
-        placeholderTextColor="#B9B9C6"
-        value={value}
-        onChangeText={setValue}
-        returnKeyType="done"
-        onSubmitEditing={submit}
+    <View style={[styles.container, { backgroundColor: colors.card }]}>
+      <View
+        style={[styles.circle, { borderColor: colors.border }]}
       />
-      <TouchableOpacity onPress={submit} style={{ marginLeft: 8 }}>
-        <Ionicons name="add-circle" size={32} color="#3A7CFD" />
-      </TouchableOpacity>
-    </Row>
+      <TextInput
+        style={[styles.input, { color: colors.text }]}
+        placeholder="Create a new todo..."
+        placeholderTextColor={colors.textSecondary}
+        value={text}
+        onChangeText={setText}
+        onSubmitEditing={handleAddTodo} // Add on "Enter"
+        returnKeyType="done"
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    marginTop: -20, // Pulls it up into the header
+    marginBottom: 20,
+  },
+  circle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
+    fontFamily: "JosefinSans_400Regular",
+    fontSize: 18,
+  },
+});

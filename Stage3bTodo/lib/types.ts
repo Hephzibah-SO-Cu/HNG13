@@ -1,9 +1,0 @@
-// lib/types.ts
-export interface Todo {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  position?: number; // use for ordering
-  createdAt?: string;
-}

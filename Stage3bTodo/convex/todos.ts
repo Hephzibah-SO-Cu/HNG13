@@ -1,73 +1,78 @@
 // convex/todos.ts
-import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { query, mutation } from "./_generated/server";
 
-/**
- * Return all todos ordered by position (ascending).
- */
-export const list = query({
-  args: {},
+// Get all todos, sorted by their 'order'
+export const get = query({
   handler: async (ctx) => {
-    // Simple: collect all todos. If you need ordering, use indexes / withIndex.
-    return await ctx.db.query("todos").collect();
+    return await ctx.db.query("todos").order("asc").collect();
   },
 });
 
-/**
- * Create a new todo.
- */
-export const create = mutation({
-  args: { title: v.string() },
+// Add a new todo
+export const add = mutation({
+  args: {
+    text: v.string(),
+  },
   handler: async (ctx, args) => {
-    const now = Date.now();
-    const id = await ctx.db.insert("todos", {
-      title: args.title,
-      completed: false,
-      position: now,
-      createdAt: now,
+    // Get the last todo to determine the new order
+    const lastTodo = await ctx.db.query("todos").order("desc").first();
+    const newOrder = lastTodo ? lastTodo.order + 1 : 1;
+
+    await ctx.db.insert("todos", {
+      text: args.text,
+      isCompleted: false,
+      order: newOrder,
     });
-    return id;
   },
 });
 
-/**
- * Toggle completed state for a todo
- */
-export const toggleComplete = mutation({
-  args: { id: v.id("todos") },
+// Toggle a todo's completed status
+export const toggle = mutation({
+  args: {
+    id: v.id("todos"),
+  },
   handler: async (ctx, args) => {
-    const doc = await ctx.db.get(args.id);
-    if (!doc) {
-      throw new Error("Todo not found");
+    const todo = await ctx.db.get(args.id);
+    if (todo) {
+      await ctx.db.patch(args.id, { isCompleted: !todo.isCompleted });
     }
-    await ctx.db.patch(args.id, { completed: !doc.completed });
-    return true;
   },
 });
 
-/**
- * Delete a todo by id
- */
+// Delete a todo
 export const remove = mutation({
-  args: { id: v.id("todos") },
+  args: {
+    id: v.id("todos"),
+  },
   handler: async (ctx, args) => {
-    // Use ctx.db.delete (NOT ctx.db.remove)
     await ctx.db.delete(args.id);
-    return true;
   },
 });
 
-/**
- * Reorder list: accepts array of todo ids in the intended order and writes positions.
- */
-export const reorder = mutation({
-  args: { ids: v.array(v.id("todos")) },
+// Clear all completed todos
+export const clearCompleted = mutation({
+  handler: async (ctx) => {
+    const completed = await ctx.db
+      .query("todos")
+      .filter((q) => q.eq(q.field("isCompleted"), true))
+      .collect();
+
+    await Promise.all(completed.map((todo) => ctx.db.delete(todo._id)));
+  },
+});
+
+// Update the order of all todos after drag-and-drop
+export const updateOrder = mutation({
+  args: {
+    todos: v.array(v.object({ _id: v.id("todos"), order: v.number() })),
+  },
   handler: async (ctx, args) => {
-    // Write positions sequentially. Fine for small lists.
-    for (let i = 0; i < args.ids.length; i++) {
-      const id = args.ids[i];
-      await ctx.db.patch(id, { position: i });
-    }
-    return true;
+    // Use Promise.all to update all orders concurrently
+    await Promise.all(
+      args.todos.map((todo) =>
+        ctx.db.patch(todo._id, { order: todo.order })
+      )
+    );
   },
 });

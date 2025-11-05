@@ -4,9 +4,8 @@ import { v } from "convex/values";
 
 export default defineSchema({
   todos: defineTable({
-    title: v.string(),
-    completed: v.boolean(),
-    position: v.number(),
-    createdAt: v.number()
-  }).index("by_position", ["position"]),
+    text: v.string(),
+    isCompleted: v.boolean(),
+    order: v.number(), // For drag-and-drop
+  }).index("by_order", ["order"]),
 });
