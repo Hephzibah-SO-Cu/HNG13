@@ -1,6 +1,5 @@
 // components/TodoList.tsx
 // [MODIFIED]
-// Fixing component paths
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
 import { useMutation } from "convex/react";
@@ -9,18 +8,23 @@ import { Doc } from "@/convex/_generated/dataModel";
 import DraggableFlatList, {
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
-// --- FIX: Use correct path alias ---
 import TodoItem from "@/components/TodoItem";
 import TodoFooter from "@/components/TodoFooter";
-import TodoFilters from "@/components/TodoFilters";
-// --- END FIX ---
+// 1. Remove TodoFilters import
 import { useState } from "react";
 
 type Filter = "all" | "active" | "completed";
 
-export default function TodoList({ todos }: { todos: Doc<"todos">[] }) {
+// 2. Accept `filter` as a prop
+export default function TodoList({
+  todos,
+  filter,
+}: {
+  todos: Doc<"todos">[];
+  filter: Filter;
+}) {
   const { colors } = useTheme();
-  const [filter, setFilter] = useState<Filter>("all");
+  // 3. Remove local filter state
   const updateOrder = useMutation(api.todos.updateOrder);
 
   const filteredTodos = todos.filter((todo) => {
@@ -30,7 +34,6 @@ export default function TodoList({ todos }: { todos: Doc<"todos">[] }) {
   });
 
   const onDragEnd = ({ data }: { data: Doc<"todos">[] }) => {
-    // We only update the order for the "all" filter to avoid confusion
     if (filter === "all") {
       const updatedOrder = data.map((item, index) => ({
         _id: item._id,
@@ -41,6 +44,7 @@ export default function TodoList({ todos }: { todos: Doc<"todos">[] }) {
   };
 
   return (
+    // 4. Remove `overflow: 'hidden'` to see shadows properly
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <DraggableFlatList
         data={filteredTodos}
@@ -59,8 +63,10 @@ export default function TodoList({ todos }: { todos: Doc<"todos">[] }) {
         ItemSeparatorComponent={() => (
           <View style={[styles.separator, { backgroundColor: colors.border }]} />
         )}
+        // 5. Add content container style for padding
+        contentContainerStyle={styles.listContent}
       />
-      <TodoFilters filter={filter} setFilter={setFilter} />
+      {/* 6. REMOVE TodoFilters from here */}
     </View>
   );
 }
@@ -69,12 +75,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     borderRadius: 5,
-    overflow: "hidden", // Clips the list items
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 5,
+    // Add margin bottom so it doesn't touch the new filter card
+    marginBottom: 20,
+  },
+  // 7. Add list content style for padding inside
+  listContent: {
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
+    overflow: "hidden", // Clip items inside
   },
   separator: {
     height: 1,

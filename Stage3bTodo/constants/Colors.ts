@@ -1,5 +1,5 @@
 // constants/Colors.ts
-// ... (all the const definitions are correct)
+// [MODIFIED]
 const lightBackground = "#FAFAFA";
 const lightCard = "#FFFFFF";
 const lightText = "#494C6B";
@@ -17,13 +17,13 @@ const darkCompleted = "#4D5067";
 
 // Shared
 const primary = "#3A7CFD";
-// --- THIS IS THE FIX ---
-// Explicitly type the gradient as a readonly array of 2 strings
 const gradient: readonly [string, string] = ["#55DDFF", "#C058F3"];
-// --- END FIX ---
+
+// Header Gradients
+const headerGradientLight: readonly [string, string] = ["#55DDFF", "#C058F3"];
+const headerGradientDark: readonly [string, string] = ["#3710BD", "#A42395"];
 
 export const Colors = {
-  // ... (rest of the file is unchanged)
   light: {
     background: lightBackground,
     card: lightCard,
@@ -33,6 +33,7 @@ export const Colors = {
     completed: lightCompleted,
     primary,
     gradient,
+    headerGradient: headerGradientLight, // <-- FIX: Use one consistent key
   },
   dark: {
     background: darkBackground,
@@ -43,5 +44,6 @@ export const Colors = {
     completed: darkCompleted,
     primary,
     gradient,
+    headerGradient: headerGradientDark, // <-- FIX: Use one consistent key
   },
 };

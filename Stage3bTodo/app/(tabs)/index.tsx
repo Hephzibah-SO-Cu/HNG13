@@ -3,23 +3,26 @@
 import {
   StyleSheet,
   View,
+  SafeAreaView,
   ActivityIndicator,
 } from "react-native";
-// 1. Import from react-native-safe-area-context
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
 import Header from "@/components/Header";
 import TodoInput from "@/components/TodoInput";
 import TodoList from "@/components/TodoList";
+import TodoFilters from "@/components/TodoFilters"; // 1. Import TodoFilters
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useState } from "react"; // 2. Import useState
+
+type Filter = "all" | "active" | "completed";
 
 export default function TodoScreen() {
   const { colors } = useTheme();
   const todos = useQuery(api.todos.get);
+  const [filter, setFilter] = useState<Filter>("all"); // 3. Lift state up
 
   return (
-    // 2. This SafeAreaView is now the correct one
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
@@ -32,7 +35,10 @@ export default function TodoScreen() {
       ) : (
         <View style={styles.content}>
           <TodoInput />
-          <TodoList todos={todos} />
+          {/* 4. Pass todos and filter to TodoList */}
+          <TodoList todos={todos} filter={filter} />
+          {/* 5. Render TodoFilters separately */}
+          <TodoFilters filter={filter} setFilter={setFilter} />
         </View>
       )}
     </SafeAreaView>
