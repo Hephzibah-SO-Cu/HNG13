@@ -5,6 +5,7 @@ import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import Link from "next/link";
 import CartQuantitySelector from "./CartQuantitySelector";
+import toast from 'react-hot-toast'; // 1. Import toast
 
 interface CartModalProps {
   onClose: () => void;
@@ -22,14 +23,9 @@ export default function CartModal({ onClose }: CartModalProps) {
       />
 
       {/* --- MODAL (FIXED) --- */}
-      {/* - Removed 'container' class which fights with absolute positioning.
-        - Added 'left-1/2 -translate-x-1/2' to center on mobile.
-        - Kept 'md:right-10' for tablet.
-        - Removed 'lg:right-auto' so it *inherits* the 'md:right-10' on desktop.
-        - Added 'md:left-auto md:-translate-x-0' to undo the mobile centering.
-      */}
+      {/* 1. Changed `absolute` to `fixed` to stop scroll */}
       <div
-        className="absolute z-50 mt-6 rounded-lg bg-white p-8 top-[90px] w-[90%] 
+        className="fixed z-50 mt-6 rounded-lg bg-white p-8 top-[90px] w-[90%] 
                    left-1/2 -translate-x-1/2 
                    md:w-[377px] md:left-auto md:-translate-x-0 md:right-10"
       >
@@ -41,7 +37,10 @@ export default function CartModal({ onClose }: CartModalProps) {
             <div className="flex justify-between items-center mb-8">
               <h6 className="uppercase">Cart ({cartCount})</h6>
               <button
-                onClick={clearCart}
+                onClick={() => {
+                  clearCart();
+                  toast.success("Cart cleared"); // 2. Added toast
+                }}
                 className="text-body text-black opacity-50 underline hover:text-primary"
               >
                 Remove all
@@ -50,6 +49,7 @@ export default function CartModal({ onClose }: CartModalProps) {
 
             {/* Item List */}
             <div className="flex flex-col gap-6 mb-8">
+              {/* ... (item map is unchanged) ... */}
               {cart.map((item) => (
                 <div key={item.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -81,7 +81,7 @@ export default function CartModal({ onClose }: CartModalProps) {
             {/* Checkout Button */}
             <Link
               href="/checkout"
-              onClick={onClose} // Close modal on click
+              onClick={onClose}
               className="inline-block w-full text-sub uppercase tracking-[1px] font-bold text-center px-[30px] py-[15px] transition-colors bg-primary text-white hover:bg-primary-light"
             >
               Checkout
@@ -92,4 +92,3 @@ export default function CartModal({ onClose }: CartModalProps) {
     </>
   );
 }
-

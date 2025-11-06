@@ -5,7 +5,8 @@ import Image from "next/image";
 import { Product } from "@/lib/data";
 import QuantitySelector from "@/components/products/QuantitySelector";
 import { useState } from "react";
-import { useCart } from "@/context/CartContext"; // 1. Import useCart
+import { useCart } from "@/context/CartContext";
+import toast from 'react-hot-toast'; // 1. Import toast
 
 interface ProductDetailCardProps {
   product: Product;
@@ -13,19 +14,18 @@ interface ProductDetailCardProps {
 
 export default function ProductDetailCard({ product }: ProductDetailCardProps) {
   const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart(); // 2. Get the addToCart function
+  const { addToCart } = useCart();
 
   const handleAddToCart = () => {
-    // 3. Call addToCart with the product and quantity
     addToCart(product, quantity);
-    console.log(`Added ${quantity} of ${product.name} to cart`);
+    // 2. Add toast notification
+    toast.success(`${quantity} x ${product.shortName} added to cart!`);
   };
 
   return (
     <section className="flex flex-col md:flex-row md:items-center md:gap-16 lg:gap-32">
       {/* Image Section */}
       <div className="w-full h-[327px] md:h-[480px] lg:h-[560px] md:w-2/5 lg:w-1/2 relative rounded-lg overflow-hidden">
-        {/* ... (Image tags are unchanged) ... */}
         <Image
           src={product.image.mobile}
           alt={product.name}
@@ -65,7 +65,7 @@ export default function ProductDetailCard({ product }: ProductDetailCardProps) {
         <div className="flex items-center gap-4">
           <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
           <button
-            onClick={handleAddToCart} // 4. Wire up the button
+            onClick={handleAddToCart}
             className="inline-block text-sub uppercase tracking-[1px] font-bold text-center px-[30px] py-[15px] transition-colors bg-primary text-white hover:bg-primary-light"
           >
             Add to Cart
@@ -75,4 +75,3 @@ export default function ProductDetailCard({ product }: ProductDetailCardProps) {
     </section>
   );
 }
-

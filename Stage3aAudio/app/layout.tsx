@@ -5,7 +5,8 @@ import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { CartProvider } from "@/context/CartContext"; // 1. Import CartProvider
+import { CartProvider } from "@/context/CartContext";
+import { Toaster } from 'react-hot-toast'; // 1. Import Toaster
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -26,8 +27,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${manrope.variable} font-sans bg-white-off`}>
+        {/* 2. Add Toaster component here */}
+        <Toaster 
+          position="bottom-center"
+          toastOptions={{
+            style: {
+              background: '#333',
+              color: '#fff',
+            }
+          }}
+        />
         <ConvexClientProvider>
-          {/* 2. Wrap the app in the CartProvider */}
           <CartProvider>
             <Header />
             <main>{children}</main>
@@ -38,4 +48,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -4,9 +4,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react"; // 1. Import useState
+import { useState } from "react";
 import CartModal from "./cart/CartModal";
-import MobileMenu from "./MobileMenu"; // 2. Import MobileMenu
+import MobileMenu from "./MobileMenu";
+import { useScrollLock } from "@/hooks/useScrollLock"; // 1. Import the hook
 
 const navLinks = [
   { name: "HOME", href: "/" },
@@ -18,25 +19,25 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // 3. Add state for Mobile Menu
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // 2. Use the hook. It will lock scroll if *either* modal is open.
+  useScrollLock(isCartOpen || isMenuOpen);
 
-  // Function to toggle menu and ensure cart is closed
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     if (!isMenuOpen) {
-      setIsCartOpen(false); // Close cart when opening menu
+      setIsCartOpen(false);
     }
   };
 
-  // Function to toggle cart and ensure menu is closed
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
     if (!isCartOpen) {
-      setIsMenuOpen(false); // Close menu when opening cart
+      setIsMenuOpen(false);
     }
   };
 
-  // Function to close both
   const closeModals = () => {
     setIsMenuOpen(false);
     setIsCartOpen(false);
@@ -46,7 +47,6 @@ export default function Header() {
     <>
       <header className="bg-black-pure sticky top-0 z-50">
         <div className="container relative flex items-center justify-between border-b border-white border-opacity-20 h-[90px]">
-          {/* 4. Wire up Hamburger button */}
           <button
             onClick={toggleMenu}
             className="lg:hidden"
@@ -61,7 +61,7 @@ export default function Header() {
           </button>
           <Link
             href="/"
-            onClick={closeModals} // Close modals on logo click
+            onClick={closeModals}
             className="ml-10 md:ml-0 md:mr-auto lg:mr-0 lg:ml-0"
             aria-label="Audiophile homepage"
           >
@@ -87,7 +87,6 @@ export default function Header() {
               ))}
             </ul>
           </nav>
-          {/* 5. Wire up Cart button */}
           <button
             onClick={toggleCart}
             className="ml-auto"
@@ -103,10 +102,8 @@ export default function Header() {
         </div>
       </header>
 
-      {/* 6. Conditionally render the Modals */}
       {isMenuOpen && <MobileMenu onClose={closeModals} />}
       {isCartOpen && <CartModal onClose={closeModals} />}
     </>
   );
 }
-

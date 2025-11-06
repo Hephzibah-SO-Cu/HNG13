@@ -14,10 +14,9 @@ export default function MobileMenu({ onClose }: MobileMenuProps) {
         onClick={onClose}
       />
       
-      {/* --- MENU PANEL --- */}
-      <div className="absolute top-[90px] left-0 right-0 z-40 bg-white rounded-b-lg shadow-lg">
-        {/* We re-use CategoryNav, but pass `onLinkClick` to close the menu
-            and a custom class to fix the padding */}
+      {/* --- MENU PANEL (FIXED) --- */}
+      {/* 1. Changed `absolute` to `fixed` to stop scroll */}
+      <div className="fixed top-[90px] left-0 right-0 z-40 bg-white rounded-b-lg shadow-lg">
         <CategoryNav
           onLinkClick={onClose}
           className="pt-16 pb-8" // Tighter padding for mobile menu
@@ -26,4 +25,3 @@ export default function MobileMenu({ onClose }: MobileMenuProps) {
     </>
   );
 }
-

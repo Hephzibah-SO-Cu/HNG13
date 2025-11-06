@@ -1,4 +1,5 @@
 // components/checkout/OrderConfirmation.tsx
+// [MODIFIED]
 "use client";
 
 import { useCart } from "@/context/CartContext";
@@ -11,10 +12,11 @@ interface OrderConfirmationProps {
 const SHIPPING_FEE = 50; // Define shipping fee locally
 
 export default function OrderConfirmation({ onFinish }: OrderConfirmationProps) {
-  // --- FIX: Get cartTotal, and check for firstItem ---
   const { cart, cartTotal } = useCart();
+  
+  // --- FIX: Get the first item, but also check if there are more ---
   const firstItem = cart.length > 0 ? cart[0] : null;
-  // Calculate grandTotal locally
+  const otherItems = cart.slice(1); // Get all items *after* the first
   const grandTotal = cartTotal + SHIPPING_FEE;
   // --- END FIX ---
 
@@ -38,33 +40,65 @@ export default function OrderConfirmation({ onFinish }: OrderConfirmationProps) 
           You will receive an email confirmation shortly.
         </p>
 
-        {/* --- FIX: Only render summary if we have an item --- */}
+        {/* --- FIX: Implement Full Order Summary --- */}
         {firstItem ? (
           <div className="my-6 md:my-8 md:flex">
-            {/* Item List */}
+            {/* Item List (now scrollable) */}
             <div className="bg-gray-light p-6 rounded-t-lg md:rounded-l-lg md:rounded-r-none md:w-3/5">
-              <div className="flex items-center justify-between border-b border-gray-300 pb-4">
-                <div className="flex items-center gap-4">
-                  <Image
-                    src={firstItem.image.mobile}
-                    alt={firstItem.name}
-                    width={50}
-                    height={50}
-                    className="rounded-lg"
-                  />
-                  <div>
-                    <p className="text-body font-bold">{firstItem.shortName}</p>
-                    <p className="text-sm font-bold text-black opacity-50">
-                      $ {firstItem.price.toLocaleString()}
-                    </p>
+              
+              {/* --- START SCROLLABLE LIST --- */}
+              <div className="max-h-[150px] overflow-y-auto pr-2">
+                {/* First Item */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={firstItem.image.mobile}
+                      alt={firstItem.name}
+                      width={50}
+                      height={50}
+                      className="rounded-lg"
+                    />
+                    <div>
+                      <p className="text-body font-bold">{firstItem.shortName}</p>
+                      <p className="text-sm font-bold text-black opacity-50">
+                        $ {firstItem.price.toLocaleString()}
+                      </p>
+                    </div>
                   </div>
+                  <span className="text-body font-bold opacity-50">
+                    x{firstItem.quantity}
+                  </span>
                 </div>
-                <span className="text-body font-bold opacity-50">
-                  x{firstItem.quantity}
-                </span>
+                
+                {/* Other Items */}
+                {otherItems.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between mt-4 pt-4 border-t border-gray-300">
+                    <div className="flex items-center gap-4">
+                      <Image
+                        src={item.image.mobile}
+                        alt={item.name}
+                        width={50}
+                        height={50}
+                        className="rounded-lg"
+                      />
+                      <div>
+                        <p className="text-body font-bold">{item.shortName}</p>
+                        <p className="text-sm font-bold text-black opacity-50">
+                          $ {item.price.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-body font-bold opacity-50">
+                      x{item.quantity}
+                    </span>
+                  </div>
+                ))}
               </div>
+              {/* --- END SCROLLABLE LIST --- */}
+              
+              {/* This is the new "View Less" toggle, which only shows if there are many items */}
               {cart.length > 1 && (
-                <p className="text-sm text-center font-bold opacity-50 pt-3">
+                <p className="text-sm text-center font-bold opacity-50 pt-3 border-t border-gray-300 mt-3">
                   and {cart.length - 1} other item(s)
                 </p>
               )}
@@ -77,11 +111,11 @@ export default function OrderConfirmation({ onFinish }: OrderConfirmationProps) 
             </div>
           </div>
         ) : (
-          // Fallback in case cart was empty (though we now block this)
           <div className="my-6 md:my-8 p-6 bg-gray-light rounded-lg">
             <p className="text-body opacity-50">Your order is being processed.</p>
           </div>
         )}
+        {/* --- END FIX --- */}
         
         {/* Back to Home Button */}
         <button
@@ -94,4 +128,3 @@ export default function OrderConfirmation({ onFinish }: OrderConfirmationProps) 
     </>
   );
 }
-

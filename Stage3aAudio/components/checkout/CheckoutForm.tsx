@@ -9,17 +9,15 @@ import { useCart } from "@/context/CartContext";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
-
-// --- FIX: ADDED MISSING IMPORT ---
 import Image from "next/image"; 
 import FormInput from "@/components/shared/FormInput";
 import RadioInput from "@/components/shared/RadioInput";
 import Summary from "@/components/checkout/Summary";
 import OrderConfirmation from "@/components/checkout/OrderConfirmation";
+import toast from 'react-hot-toast'; // 1. Import toast
 
-// Define constants for shipping and tax
 const SHIPPING_FEE = 50;
-const VAT_RATE = 0.2; // 20%
+const VAT_RATE = 0.2;
 
 export default function CheckoutForm() {
   const [isOrderComplete, setIsOrderComplete] = useState(false);
@@ -27,41 +25,34 @@ export default function CheckoutForm() {
   const { cart, cartTotal, clearCart } = useCart();
   const createOrder = useMutation(api.orders.createOrder);
 
-  // 1. Initialize react-hook-form
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    // 2. Get `isSubmitting` to handle duplicate submissions
+    formState: { errors, isSubmitting },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      paymentMethod: "eMoney", // Default payment method
+      paymentMethod: "eMoney",
     },
   });
 
   const paymentMethod = watch("paymentMethod");
-
-  // 2. Calculate totals
   const vat = cartTotal * VAT_RATE;
-  const grandTotal = cartTotal + SHIPPING_FEE; // VAT is shown, but task implies it's included in total
+  const grandTotal = cartTotal + SHIPPING_FEE;
 
-  // 3. Handle form submission
   const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
-    
-    // --- FIX: PREVENT EMPTY CART SUBMISSION ---
     if (cart.length === 0) {
-      console.error("Cannot checkout with an empty cart.");
-      // In a real app, you'd show a toast notification here
+      // 3. Add toast for empty cart
+      toast.error("Your cart is empty. Please add items.");
       return; 
     }
-    // --- END FIX ---
     
     console.log("Form data submitted:", data);
     
-    // --- FIX: CORRECTLY MAP FORM DATA TO CONVEX ARGS ---
     const orderData = {
-      customerName: data.name, // Map data.name to customerName
+      customerName: data.name,
       email: data.email,
       phone: data.phone,
       address: data.address,
@@ -73,49 +64,41 @@ export default function CheckoutForm() {
         name: item.shortName,
         price: item.price,
         quantity: item.quantity,
-        // We removed productId from the schema, so we don't send it
       })),
       subtotal: cartTotal,
       shipping: SHIPPING_FEE,
       taxes: vat,
       grandTotal: grandTotal,
     };
-    // --- END FIX ---
 
     try {
-      // 4. Call Convex mutation
       await createOrder(orderData);
-      
-      // 5. Show success modal
+      // 4. Add success toast
+      toast.success("Order placed successfully!");
       setIsOrderComplete(true);
-      // We don't clear cart yet, as modal needs it
-
     } catch (error) {
       console.error("Failed to create order:", error);
-      // TODO: Show an error toast to the user
+      // 5. Add error toast
+      toast.error("There was an error placing your order.");
     }
   };
 
   const handleFinish = () => {
-    // 6. Clear cart and go home
     clearCart();
     router.push("/");
   };
 
-  // If order is complete, show the modal instead of the form
   if (isOrderComplete) {
     return <OrderConfirmation onFinish={handleFinish} />;
   }
 
   return (
-    // 7. Main form element with responsive layout
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="flex flex-col lg:flex-row lg:gap-8">
         {/* --- LEFT SIDE: FORM FIELDS --- */}
         <div className="bg-white rounded-lg p-6 md:p-8 lg:w-2/3">
+          {/* ... (form fields are unchanged) ... */}
           <h1 className="text-h4 md:text-h3 mb-8">Checkout</h1>
-
-          {/* Billing Details */}
           <section>
             <h2 className="subtitle-text text-primary mb-4">Billing Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -143,8 +126,6 @@ export default function CheckoutForm() {
               />
             </div>
           </section>
-
-          {/* Shipping Info */}
           <section className="mt-8">
             <h2 className="subtitle-text text-primary mb-4">Shipping Info</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -175,8 +156,6 @@ export default function CheckoutForm() {
               />
             </div>
           </section>
-
-          {/* Payment Details */}
           <section className="mt-8">
             <h2 className="subtitle-text text-primary mb-4">Payment Details</h2>
             <div className="md:grid md:grid-cols-2 md:gap-6">
@@ -198,8 +177,6 @@ export default function CheckoutForm() {
                 />
               </div>
             </div>
-
-            {/* Conditional Inputs */}
             {paymentMethod === "eMoney" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <FormInput
@@ -217,7 +194,6 @@ export default function CheckoutForm() {
                 />
               </div>
             )}
-            
             {paymentMethod === "cashOnDelivery" && (
               <div className="flex items-center gap-6 mt-6">
                 <Image src="/assets/checkout/icon-cash-on-delivery.svg" alt="" width={48} height={48} />
@@ -234,14 +210,15 @@ export default function CheckoutForm() {
 
         {/* --- RIGHT SIDE: SUMMARY CARD --- */}
         <div className="lg:w-1/3">
+          {/* 6. Pass `isSubmitting` prop to Summary */}
           <Summary
             shipping={SHIPPING_FEE}
             vat={vat}
             grandTotal={grandTotal}
+            isSubmitting={isSubmitting}
           />
         </div>
       </div>
     </form>
   );
 }
-

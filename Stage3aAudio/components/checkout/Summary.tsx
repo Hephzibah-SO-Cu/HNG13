@@ -8,9 +8,15 @@ interface SummaryProps {
   shipping: number;
   vat: number;
   grandTotal: number;
+  isSubmitting: boolean; // 1. Accept `isSubmitting`
 }
 
-export default function Summary({ shipping, vat, grandTotal }: SummaryProps) {
+export default function Summary({
+  shipping,
+  vat,
+  grandTotal,
+  isSubmitting, // 2. Use it
+}: SummaryProps) {
   const { cart, cartTotal } = useCart();
 
   return (
@@ -19,6 +25,7 @@ export default function Summary({ shipping, vat, grandTotal }: SummaryProps) {
 
       {/* Item List */}
       <div className="flex flex-col gap-6 mb-8">
+        {/* ... (item map is unchanged) ... */}
         {cart.map((item) => (
           <div key={item.id} className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -45,6 +52,7 @@ export default function Summary({ shipping, vat, grandTotal }: SummaryProps) {
 
       {/* Price Calculation */}
       <div className="flex flex-col gap-2">
+        {/* ... (price calculation is unchanged) ... */}
         <div className="flex justify-between">
           <p className="text-body uppercase opacity-50">Total</p>
           <p className="text-h6">$ {cartTotal.toLocaleString()}</p>
@@ -63,13 +71,14 @@ export default function Summary({ shipping, vat, grandTotal }: SummaryProps) {
         </div>
       </div>
 
-      {/* Submit Button */}
-      {/* The `type="submit"` links this button to the <form> it's inside */}
+      {/* 3. Implement the submission state */}
       <button
         type="submit"
-        className="w-full text-sub uppercase tracking-[1px] font-bold text-center px-[30px] py-[15px] transition-colors bg-primary text-white hover:bg-primary-light mt-8"
+        disabled={isSubmitting}
+        className="w-full text-sub uppercase tracking-[1px] font-bold text-center px-[30px] py-[15px] transition-colors bg-primary text-white hover:bg-primary-light mt-8
+                   disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
-        Continue & Pay
+        {isSubmitting ? "Placing Order..." : "Continue & Pay"}
       </button>
     </div>
   );
