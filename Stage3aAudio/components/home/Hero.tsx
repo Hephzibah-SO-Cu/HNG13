@@ -1,4 +1,5 @@
 // components/home/Hero.tsx
+// [MODIFIED]
 import Button from "@/components/shared/Button";
 import Image from "next/image";
 
@@ -6,12 +7,11 @@ export default function Hero() {
   return (
     <div className="bg-black-pure">
       <div
-        className="container relative flex flex-col items-center justify-center text-center -mt-[90px] pt-[198px] pb-[110px] overflow-hidden 
+        className="container relative flex flex-col items-center justify-center text-center -mt-[90px] pt-[198px] pb-[110px] overflow-hidden
                       md:pt-[225px] md:pb-[167px]
                       lg:items-start lg:text-left lg:pt-[225px] lg:pb-[158px]"
       >
-        {/* Background Images - Using Next/Image for optimization */}
-        {/* Mobile Image */}
+        {/* Background Images */}
         <Image
           src="/assets/home/mobile/image-header.jpg"
           alt=""
@@ -19,7 +19,6 @@ export default function Hero() {
           className="object-cover object-bottom md:hidden"
           priority
         />
-        {/* Tablet Image */}
         <Image
           src="/assets/home/tablet/image-header.jpg"
           alt=""
@@ -27,7 +26,6 @@ export default function Hero() {
           className="hidden md:block lg:hidden object-cover object-bottom"
           priority
         />
-        {/* Desktop Image */}
         <Image
           src="/assets/home/desktop/image-hero.jpg"
           alt=""
@@ -47,7 +45,10 @@ export default function Hero() {
             made for the passionate music enthusiast.
           </p>
           <Button
-            href="/products/xx99-mark-ii-headphones" // This is a guess, we'll confirm later
+            // --- THIS IS THE FIX ---
+            // Changed "ii" to "two" to match your lib/data.ts
+            href="/products/xx99-mark-two-headphones"
+            // --- END FIX ---
             variant="primary"
             className="mt-7 md:mt-10"
           >
@@ -58,4 +59,3 @@ export default function Hero() {
     </div>
   );
 }
-
