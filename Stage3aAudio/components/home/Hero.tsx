@@ -5,13 +5,14 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <div className="bg-black-pure">
+    // 3. APPLY THE NEW COLOR HERE
+    <div className="bg-hero-black">
       <div
         className="container relative flex flex-col items-center justify-center text-center -mt-[90px] pt-[198px] pb-[110px] overflow-hidden
                       md:pt-[225px] md:pb-[167px]
                       lg:items-start lg:text-left lg:pt-[225px] lg:pb-[158px]"
       >
-        {/* Background Images */}
+        {/* ... (Images are unchanged) ... */}
         <Image
           src="/assets/home/mobile/image-header.jpg"
           alt=""
@@ -34,7 +35,7 @@ export default function Hero() {
           priority
         />
 
-        {/* Content */}
+        {/* ... (Content is unchanged) ... */}
         <div className="relative z-10 flex flex-col items-center lg:items-start max-w-sm">
           <span className="overline-text text-white opacity-50">
             New Product
@@ -45,10 +46,7 @@ export default function Hero() {
             made for the passionate music enthusiast.
           </p>
           <Button
-            // --- THIS IS THE FIX ---
-            // Changed "ii" to "two" to match your lib/data.ts
             href="/products/xx99-mark-two-headphones"
-            // --- END FIX ---
             variant="primary"
             className="mt-7 md:mt-10"
           >

@@ -1,4 +1,5 @@
 // components/Header.tsx
+// [MODIFIED]
 "use client";
 
 import Link from "next/link";
@@ -7,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import CartModal from "./cart/CartModal";
 import MobileMenu from "./MobileMenu";
-import { useScrollLock } from "@/hooks/useScrollLock"; // 1. Import the hook
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 const navLinks = [
   { name: "HOME", href: "/" },
@@ -21,9 +22,9 @@ export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // 2. Use the hook. It will lock scroll if *either* modal is open.
   useScrollLock(isCartOpen || isMenuOpen);
 
+  // ... (toggle functions are unchanged)
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     if (!isMenuOpen) {
@@ -45,11 +46,12 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-black-pure sticky top-0 z-50">
+      <header className="bg-hero-black sticky top-0 z-50">
         <div className="container relative flex items-center justify-between border-b border-white border-opacity-20 h-[90px]">
+          {/* --- FIX 1: Set mr-0 on mobile --- */}
           <button
             onClick={toggleMenu}
-            className="lg:hidden"
+            className="lg:hidden mr-0"
             aria-label="Open navigation menu"
           >
             <Image
@@ -59,10 +61,11 @@ export default function Header() {
               height={15}
             />
           </button>
+          {/* --- FIX 3: Set mx-auto on mobile --- */}
           <Link
             href="/"
             onClick={closeModals}
-            className="ml-10 md:ml-0 md:mr-auto lg:mr-0 lg:ml-0"
+            className="mx-auto md:ml-0 md:mr-auto lg:mr-0 lg:ml-0"
             aria-label="Audiophile homepage"
           >
             <Image
@@ -87,9 +90,10 @@ export default function Header() {
               ))}
             </ul>
           </nav>
+          {/* --- FIX 2: Set ml-0 on mobile --- */}
           <button
             onClick={toggleCart}
-            className="ml-auto"
+            className="ml-0 md:ml-auto"
             aria-label="Open cart"
           >
             <Image
