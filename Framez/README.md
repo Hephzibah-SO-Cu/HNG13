@@ -68,8 +68,11 @@ npm install
 - Create a file named .env.local in the root of the project.
 - Go to your Supabase project's Settings > API and find your Project URL and anon key.
 - Add them to .env.local (this file is gitignored):
-    NEXT_PUBLIC_SUPABASE_URL=YOUR_PROJECT_URL_HERE
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY_HERE
+```bash
+NEXT_PUBLIC_SUPABASE_URL=YOUR_PROJECT_URL_HERE
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY_HERE
+```
+
 - (Note: The NEXT_PUBLIC_ prefix is a convention from create-expo-app to expose variables. We load them in lib/supabase.ts).
 
 4. Run the Database SQL Scripts:
