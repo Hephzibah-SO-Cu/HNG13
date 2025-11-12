@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router'; // 1. IMPORTED ROUTER
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
 import { Colors } from '../../theme/colors';
@@ -12,31 +13,35 @@ const { width } = Dimensions.get('window');
 const GRID_ITEM_SIZE = width / 3;
 type TabType = 'posts' | 'likes' | 'bookmarks';
 
-// MOVED STYLES TO THE TOP to fix the 'styles used before declaration' error
+// 5. MOVED STYLES TO TOP to fix declaration errors
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   topBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, height: 44, borderBottomWidth: 1, borderBottomColor: Colors.border },
   topBarUsername: { fontSize: 16, fontWeight: '700', marginLeft: 8, flex: 1 },
   logoutButton: { padding: 4 },
-  gridItem: { width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderWidth: 0.5, borderColor: Colors.background },
+  gridItem: { width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderWidth: 1, borderColor: Colors.background },
   gridImage: { width: '100%', height: '100%' },
   emptyState: { padding: 40, alignItems: 'center', justifyContent: 'center', marginTop: 50 },
   emptyText: { color: Colors.textSecondary, marginTop: 12, fontSize: 16 },
-  loadingOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(255,255,255,0.8)', justifyContent: 'center', alignItems: 'center', zIndex: 10 }
+  loadingOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(255,255,255,0.8)', justifyContent: 'center', alignItems: 'center', zIndex: 10 },
+  gridItemInner: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
 });
 
 export default function ProfileScreen() {
+  const router = useRouter(); // 2. INITIALIZED ROUTER
   const { session } = useAuthStore();
   const [profile, setProfile] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('posts');
-
-  // Counts now include followers/following
+  // 4. ADDED follower counts to state
   const [counts, setCounts] = useState({ posts: 0, likes: 0, bookmarks: 0, followers: 0, following: 0 });
 
-  // Helper to get post IDs for likes/bookmarks
   async function getInteractionPostIds(table: 'likes' | 'bookmarks') {
       if (!session?.user) return [];
       const { data } = await supabase.from(table).select('post_id').eq('user_id', session.user.id);
@@ -48,14 +53,14 @@ export default function ProfileScreen() {
     try {
       if (!refreshing) setIsLoading(true);
 
-      // Fetch ALL data in parallel
+      // 4. MODIFIED to fetch all 5 counts
       const [profileData, postsCount, likesCount, bookmarksCount, followersCount, followingCount] = await Promise.all([
           supabase.from('profiles').select('*').eq('id', session.user.id).single(),
           supabase.from('posts').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id),
           supabase.from('likes').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id),
           supabase.from('bookmarks').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id),
-          supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', session.user.id), // Ppl following me
-          supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', session.user.id), // Ppl I follow
+          supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', session.user.id),
+          supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', session.user.id),
       ]);
 
       if (profileData.data) setProfile(profileData.data);
@@ -67,8 +72,7 @@ export default function ProfileScreen() {
           following: followingCount.count || 0,
       });
 
-      // Fetch Tab Content
-      let query = supabase.from('posts').select('id, image_url, created_at');
+      let query = supabase.from('posts').select('id, image_url, created_at, type');
       if (activeTab === 'posts') {
           query = query.eq('user_id', session.user.id);
       } else if (activeTab === 'likes') {
@@ -92,44 +96,26 @@ export default function ProfileScreen() {
     }
   }
 
-  // Effect for initial fetch AND realtime updates
+  // 4. ADDED Realtime listener for follows
   useEffect(() => {
     if (session?.user) {
-        fetchProfileData(); // Fetch data based on active tab
-
-        // ** REALTIME LISTENER FOR MY OWN PROFILE **
+        fetchProfileData();
         const channel = supabase
               .channel(`profile:${session.user.id}`)
-              .on(
-                  'postgres_changes',
-                  { 
-                      event: '*', schema: 'public', table: 'follows', 
-                      // Listen for changes where I am the follower OR the one being followed
-                      filter: `follower_id=eq.${session.user.id}` 
-                  },
-                  // Payload for when I follow someone
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'follows', filter: `follower_id=eq.${session.user.id}` },
                   (payload) => {
-                      console.log('I followed someone', payload);
                       setCounts(prev => ({ ...prev, following: prev.following + 1 }));
                   }
               )
-              .on(
-                  'postgres_changes',
-                  { 
-                      event: '*', schema: 'public', table: 'follows', 
-                      filter: `following_id=eq.${session.user.id}` 
-                  },
-                   // Payload for when someone follows me
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'follows', filter: `following_id=eq.${session.user.id}` },
                   (payload) => {
-                       console.log('Someone followed me', payload);
                        setCounts(prev => ({ ...prev, followers: prev.followers + 1 }));
                   }
               )
               .subscribe();
-        
         return () => { supabase.removeChannel(channel); };
     }
-  }, [session, activeTab]); // Re-run when session or tab changes
+  }, [session, activeTab]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -138,18 +124,52 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => { await supabase.auth.signOut(); };
 
-  const renderGridItem = ({ item }: { item: any }) => (
-      <TouchableOpacity style={styles.gridItem}>
-          <Image source={{ uri: item.image_url }} style={styles.gridImage} />
-      </TouchableOpacity>
-  );
+  // 3. DEFINED handleEditProfile
+  const handleEditProfile = () => {
+      router.push('/edit-profile');
+  };
+
+  const renderGridItem = ({ item }: { item: any }) => {
+      let content = null;
+      let tint = Colors.tints.base;
+      switch (item.type) {
+          case 'photo':
+              tint = Colors.tints.photo;
+              content = <Image source={{ uri: item.image_url }} style={styles.gridImage} />;
+              break;
+          case 'video':
+              tint = Colors.tints.video;
+              content = <Ionicons name="videocam" size={GRID_ITEM_SIZE / 3.5} color={Colors.glow.video} />;
+              break;
+          case 'audio':
+              tint = Colors.tints.audio;
+              content = <Ionicons name="musical-notes" size={GRID_ITEM_SIZE / 3.5} color={Colors.glow.audio} />;
+              break;
+          case 'text':
+              tint = Colors.tints.text;
+              content = <Ionicons name="text" size={GRID_ITEM_SIZE / 3.5} color={Colors.glow.text} />;
+              break;
+          default:
+              if (item.image_url) {
+                  tint = Colors.tints.photo;
+                  content = <Image source={{ uri: item.image_url }} style={styles.gridImage} />;
+              }
+      }
+      return (
+          <TouchableOpacity style={styles.gridItem}>
+              <View style={[styles.gridItemInner, { backgroundColor: tint }]}>
+                  {content}
+              </View>
+          </TouchableOpacity>
+      );
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.topBar}>
          <Ionicons name="lock-closed-outline" size={16} color={Colors.textPrimary} />
          <Text style={styles.topBarUsername}>{profile?.username}</Text>
-         {/* ** FIXED ICON ** */}
+         {/* 6. FIXED Logout Icon */}
          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
              <Ionicons name="log-out-outline" size={28} color={Colors.error} />
          </TouchableOpacity>
@@ -165,9 +185,10 @@ export default function ProfileScreen() {
                 <ProfileHeader
                     profile={profile}
                     postCount={counts.posts}
-                    followerCount={counts.followers} // REAL DATA
-                    followingCount={counts.following} // REAL DATA
+                    followerCount={counts.followers}
+                    followingCount={counts.following}
                     isOwnProfile={true}
+                    onEditProfile={handleEditProfile} // 3. PASSED PROP
                 />
                 <ProfileTabs
                     activeTab={activeTab}

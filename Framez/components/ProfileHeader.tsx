@@ -4,6 +4,7 @@ import { Colors } from '../theme/colors';
 interface Profile {
     id: string;
     username: string | null;
+    full_name: string | null; // <-- New Field
     avatar_url: string | null;
     bio: string | null;
 }
@@ -17,6 +18,7 @@ interface Props {
     isFollowing?: boolean;
     onFollowToggle?: () => void;
     isFollowLoading?: boolean;
+    onEditProfile?: () => void;
 }
 
 export function ProfileHeader({
@@ -28,13 +30,14 @@ export function ProfileHeader({
     isFollowing = false,
     onFollowToggle,
     isFollowLoading = false,
+    onEditProfile,
 }: Props) {
-    const username = profile?.username || 'User';
-    const initials = username[0]?.toUpperCase();
+    const username = profile?.username || 'user';
+    const fullName = profile?.full_name || username; // Fallback to username if no full name
+    const initials = (fullName[0] || username[0])?.toUpperCase();
 
     return (
         <View style={styles.container}>
-            {/* Top Row: Avatar & Stats */}
             <View style={styles.topRow}>
                 <View style={styles.avatarContainer}>
                     {profile?.avatar_url ? (
@@ -60,18 +63,20 @@ export function ProfileHeader({
                 </View>
             </View>
 
-            {/* Bio Section */}
+            {/* Updated Bio Section */}
             <View style={styles.bioSection}>
-                <Text style={styles.username}>{username}</Text>
-                {/* We'll add a bio field later */}
+                <Text style={styles.fullName}>{fullName}</Text>
+                <Text style={styles.username}>@{username}</Text>
+                {profile?.bio && <Text style={styles.bio}>{profile.bio}</Text>}
             </View>
 
-            {/* Action Buttons */}
             <View style={styles.actions}>
                 {isOwnProfile ? (
-                    // FIXED: This <View> wrapper prevents the text node crash
                     <View style={styles.buttonRow}> 
-                        <TouchableOpacity style={[styles.button, styles.primaryButton]}>
+                        <TouchableOpacity
+                            style={[styles.button, styles.primaryButton]}
+                            onPress={onEditProfile}
+                        >
                             <Text style={styles.primaryButtonText}>Edit profile</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.secondaryButton]}>
@@ -109,10 +114,11 @@ const styles = StyleSheet.create({
     statNumber: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary },
     statLabel: { fontSize: 13, color: Colors.textSecondary, marginTop: 4 },
     bioSection: { marginBottom: 20 },
-    username: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4 },
+    // NEW STYLES for Name/Handle split
+    fullName: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary, marginBottom: 2 },
+    username: { fontSize: 15, color: Colors.textSecondary, marginBottom: 8 },
     bio: { fontSize: 15, color: Colors.textPrimary, lineHeight: 20 },
     actions: { flexDirection: 'row', gap: 10 },
-    // ADDED this style
     buttonRow: {
         flex: 1,
         flexDirection: 'row',

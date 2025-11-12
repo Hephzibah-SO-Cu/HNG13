@@ -23,7 +23,6 @@ export default function UserProfileScreen() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
 
-  // Redirect to own profile tab if ID matches
   useEffect(() => {
       if (session?.user && id === session.user.id) {
           router.replace('/(tabs)/profile');
@@ -31,7 +30,6 @@ export default function UserProfileScreen() {
   }, [id, session]);
 
   async function fetchUserProfile() {
-    if (!id) return;
     try {
       if (!refreshing) setIsLoading(true);
 
@@ -57,9 +55,10 @@ export default function UserProfileScreen() {
       });
       setIsFollowing(!!followStatus.data);
 
+      // MODIFIED: Select 'type'
       const { data: postsGrid } = await supabase
         .from('posts')
-        .select('id, image_url, created_at')
+        .select('id, image_url, type')
         .eq('user_id', id)
         .order('created_at', { ascending: false });
       setPosts(postsGrid || []);
@@ -72,25 +71,13 @@ export default function UserProfileScreen() {
     }
   }
 
-  // Effect for initial fetch AND realtime updates
   useEffect(() => {
       if (id) {
-          fetchUserProfile(); // Initial fetch
-
-          // Realtime listener for follower count
+          fetchUserProfile();
           const channel = supabase
               .channel(`profile:${id}`)
-              .on(
-                  'postgres_changes',
-                  { 
-                      event: '*', // Listen for INSERT or DELETE
-                      schema: 'public', 
-                      table: 'follows', 
-                      filter: `following_id=eq.${id}` // Only listen for changes to THIS user's followers
-                  },
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'follows', filter: `following_id=eq.${id}` },
                   (payload) => {
-                      console.log('Follow change detected!', payload);
-                      // Refetch counts to get the new number
                       const fetchCounts = async () => {
                            const { count } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', id);
                            setCounts(prev => ({ ...prev, followers: count || 0 }));
@@ -99,12 +86,9 @@ export default function UserProfileScreen() {
                   }
               )
               .subscribe();
-
-          return () => {
-              supabase.removeChannel(channel);
-          };
+          return () => { supabase.removeChannel(channel); };
       }
-  }, [id]); // Re-run when ID changes
+  }, [id]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -117,17 +101,14 @@ export default function UserProfileScreen() {
 
       try {
           if (isFollowing) {
-              // Unfollow
               const { error } = await supabase
                 .from('follows')
                 .delete()
                 .eq('follower_id', session.user.id)
                 .eq('following_id', id);
               if (error) throw error;
-              // Realtime listener will handle count update, but we can do it optimistically
               setCounts(prev => ({ ...prev, followers: prev.followers - 1 }));
           } else {
-              // Follow
               const { error } = await supabase
                 .from('follows')
                 .insert({ follower_id: session.user.id, following_id: id });
@@ -137,17 +118,49 @@ export default function UserProfileScreen() {
           setIsFollowing(!isFollowing);
       } catch (error) {
           console.error('Follow error:', error);
-          alert('Failed to update follow status');
       } finally {
           setIsFollowLoading(false);
       }
   };
 
-  const renderGridItem = ({ item }: { item: any }) => (
-      <TouchableOpacity style={styles.gridItem} disabled={true}>
-          <Image source={{ uri: item.image_url }} style={styles.gridImage} />
-      </TouchableOpacity>
-  );
+  // --- MODIFIED: The New Grid Item Renderer ---
+  const renderGridItem = ({ item }: { item: any }) => {
+      let content = null;
+      let tint = Colors.tints.base;
+
+      switch (item.type) {
+          case 'photo':
+              tint = Colors.tints.photo;
+              content = <Image source={{ uri: item.image_url }} style={styles.gridImage} />;
+              break;
+          case 'video':
+              tint = Colors.tints.video;
+              content = <Ionicons name="videocam" size={GRID_ITEM_SIZE / 3.5} color={Colors.glow.video} />;
+              break;
+          case 'audio':
+              tint = Colors.tints.audio;
+              content = <Ionicons name="musical-notes" size={GRID_ITEM_SIZE / 3.5} color={Colors.glow.audio} />;
+              break;
+          case 'text':
+              tint = Colors.tints.text;
+              content = <Ionicons name="text" size={GRID_ITEM_SIZE / 3.5} color={Colors.glow.text} />;
+              break;
+          default:
+              if (item.image_url) {
+                  tint = Colors.tints.photo;
+                  content = <Image source={{ uri: item.image_url }} style={styles.gridImage} />;
+              }
+      }
+
+      return (
+          <TouchableOpacity style={styles.gridItem}>
+              <View style={[styles.gridItemInner, { backgroundColor: tint }]}>
+                  {content}
+              </View>
+          </TouchableOpacity>
+      );
+  };
+  // --- END OF MODIFICATION ---
 
   if (isLoading) {
     return (
@@ -159,10 +172,7 @@ export default function UserProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* This hides the default header but keeps the screen in the stack */}
       <Stack.Screen options={{ headerShown: false }} />
-      
-      {/* Custom Header with Back Button */}
       <View style={styles.topBar}>
          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
              <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
@@ -201,14 +211,21 @@ export default function UserProfileScreen() {
   );
 }
 
+// --- ADDED NEW STYLES ---
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   topBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, height: 44, borderBottomWidth: 1, borderBottomColor: Colors.border },
   backButton: { paddingRight: 16 },
   topBarUsername: { fontSize: 16, fontWeight: '700', flex: 1, textAlign: 'center' },
-  gridItem: { width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderWidth: 0.5, borderColor: Colors.background },
+  gridItem: { width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderWidth: 1, borderColor: Colors.background },
   gridImage: { width: '100%', height: '100%' },
   emptyState: { padding: 40, alignItems: 'center', justifyContent: 'center', marginTop: 50 },
   emptyText: { color: Colors.textSecondary, marginTop: 12, fontSize: 16 },
+  // ADDED
+  gridItemInner: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
 });
