@@ -8,7 +8,9 @@ interface ProductGalleryProps {
 
 export default function ProductGallery({ gallery }: ProductGalleryProps) {
   return (
-    <section className="mt-20 grid grid-cols-1 md:grid-cols-[1fr,1.5fr] gap-6">
+    <section 
+    style={{padding: "0 3rem"}}
+    className="mt-20 grid grid-cols-1 md:grid-cols-[1fr,1.5fr] gap-6">
       
       {/* --- THIS IS THE FIX ---
        *

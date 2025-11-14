@@ -36,3 +36,13 @@
     @apply w-full max-w-[1110px] mx-auto px-6 md:px-10 lg:px-0;
   }
 }
+
+.bg-hero-black {
+    padding: 0 3rem;
+}
+
+.bg-black{
+    padding: 0 3rem;
+}
+
+

@@ -23,7 +23,9 @@ export default function ProductDetailCard({ product }: ProductDetailCardProps) {
   };
 
   return (
-    <section className="flex flex-col md:flex-row md:items-center md:gap-16 lg:gap-32">
+    <section 
+    style={{padding: "0 3rem"}}
+    className="flex flex-col md:flex-row md:items-center md:gap-16 lg:gap-32">
       {/* Image Section */}
       <div className="w-full h-[327px] md:h-[480px] lg:h-[560px] md:w-2/5 lg:w-1/2 relative rounded-lg overflow-hidden">
         <Image

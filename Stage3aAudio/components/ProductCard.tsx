@@ -12,12 +12,14 @@ interface ProductCardProps {
 export default function ProductCard({ product, reverse = false }: ProductCardProps) {
   return (
     <div
+    style={{padding: "0 3rem"}}
       className={`flex flex-col items-center text-center lg:flex-row lg:gap-32 lg:text-left ${
         reverse ? "lg:flex-row-reverse" : ""
       }`}
     >
       {/* Image Section */}
-      <div className="w-full h-[352px] md:h-[352px] lg:h-[560px] lg:w-1/2 relative rounded-lg overflow-hidden">
+      <div 
+      className="w-full h-[352px] md:h-[352px] lg:h-[560px] lg:w-1/2 relative rounded-lg overflow-hidden">
         <Image
           src={product.image.mobile}
           alt={product.name}

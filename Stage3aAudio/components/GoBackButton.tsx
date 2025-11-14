@@ -9,6 +9,7 @@ export default function GoBackButton() {
   return (
     <button
       onClick={() => router.back()}
+      style={{padding: "0 3rem"}}
       className="text-body text-black opacity-50 hover:text-primary hover:opacity-100 mb-6"
     >
       Go Back

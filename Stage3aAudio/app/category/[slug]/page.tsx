@@ -38,7 +38,9 @@ export default function CategoryPage() {
       <CategoryHeader title={category} />
 
       {/* 2. Product List */}
-      <section className="container mt-16 mb-32 flex flex-col gap-32">
+      <section 
+      style={{padding: "0 3rem"}}
+      className="container mt-16 mb-32 flex flex-col gap-32">
         {categoryProducts.map((product, index) => (
           <ProductCard
             key={product.id}

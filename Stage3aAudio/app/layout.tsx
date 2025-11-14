@@ -26,7 +26,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.variable} font-sans bg-white-off`}>
+      <body 
+      className={`${manrope.variable} font-sans bg-white-off`}>
         {/* 2. Add Toaster component here */}
         <Toaster 
           position="bottom-center"

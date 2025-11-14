@@ -5,7 +5,7 @@ import Button from "@/components/shared/Button";
 
 export default function FeaturedProducts() {
   return (
-    <section className="container flex flex-col gap-6 md:gap-8">
+    <section className="container flex flex-col gap-6 md:gap-8" style={{ padding: "0 3rem" }}>
       {/* --- ZX9 SPEAKER (Large) --- */}
       <div
         className="relative flex flex-col items-center overflow-hidden rounded-lg bg-primary px-6 py-14 text-center text-white

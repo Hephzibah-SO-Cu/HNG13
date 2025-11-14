@@ -12,7 +12,9 @@ export default function RelatedProducts({ relatedSlugs }: RelatedProductsProps) 
   const related = products.filter((p) => relatedSlugs.includes(p.slug));
 
   return (
-    <section className="mt-32">
+    <section 
+    style={{padding: "0 3rem"}}
+    className="mt-32">
       <h3 className="text-h5 md:text-h3 uppercase text-center mb-10 md:mb-14">
         You may also like
       </h3>

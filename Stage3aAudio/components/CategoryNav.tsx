@@ -33,8 +33,11 @@ export default function CategoryNav({
 }: CategoryNavProps) {
   return (
     // Use the passed-in className
-    <section className={`container ${className}`}>
-      <div className="grid grid-cols-1 gap-[68px] md:grid-cols-3 md:gap-[10px] lg:gap-[30px]">
+    <section 
+    style={{padding: "0 3rem"}}
+    className={`container ${className}`}>
+      <div 
+      className="grid grid-cols-1 gap-[68px] md:grid-cols-3 md:gap-[10px] lg:gap-[30px]">
         {categories.map((cat) => (
           <div
             key={cat.name}

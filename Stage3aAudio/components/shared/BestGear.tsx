@@ -3,7 +3,9 @@ import Image from "next/image";
 
 export default function BestGear() {
   return (
-    <section className="container mt-32 mb-32 px-6 text-center md:px-10 lg:px-0 lg:text-left">
+    <section 
+    style={{padding: "0 3rem"}}
+    className="container mt-32 mb-32 px-6 text-center md:px-10 lg:px-0 lg:text-left">
       <div className="flex flex-col-reverse items-center gap-16 lg:flex-row lg:gap-32">
         {/* Text Content */}
         <div className="lg:w-1/2">
