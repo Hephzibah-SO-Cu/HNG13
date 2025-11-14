@@ -46,8 +46,11 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-hero-black sticky top-0 z-50">
-        <div className="container relative flex items-center justify-between border-b border-white border-opacity-20 h-[90px]">
+      <header 
+      style={{padding: "0 3rem"}}
+      className="bg-hero-black sticky top-0 z-50">
+        <div 
+        className="container relative flex items-center justify-between border-b border-white border-opacity-20 h-[90px]">
           {/* --- FIX 1: Set mr-0 on mobile --- */}
           <button
             onClick={toggleMenu}

@@ -6,7 +6,9 @@ import Image from "next/image";
 export default function Hero() {
   return (
     // 3. APPLY THE NEW COLOR HERE
-    <div className="bg-hero-black">
+    <div 
+    style={{padding: "0 3rem"}}
+    className="bg-hero-black">
       <div
         className="container relative flex flex-col items-center justify-center text-center -mt-[90px] pt-[198px] pb-[110px] overflow-hidden
                       md:pt-[225px] md:pb-[167px]

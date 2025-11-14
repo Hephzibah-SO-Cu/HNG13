@@ -94,9 +94,12 @@ export default function CheckoutForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <div className="flex flex-col lg:flex-row lg:gap-8">
+      <div 
+      style={{padding: "0 3rem"}}
+      className="flex flex-col lg:flex-row lg:gap-8">
         {/* --- LEFT SIDE: FORM FIELDS --- */}
-        <div className="bg-white rounded-lg p-6 md:p-8 lg:w-2/3">
+        <div 
+        className="bg-white rounded-lg p-6 md:p-8 lg:w-2/3">
           {/* ... (form fields are unchanged) ... */}
           <h1 className="text-h4 md:text-h3 mb-8">Checkout</h1>
           <section>

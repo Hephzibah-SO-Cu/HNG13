@@ -11,7 +11,9 @@ const navLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white">
+    <footer 
+    style={{padding: "0 3rem"}}
+    className="bg-black text-white">
       <div className="container relative pt-12 pb-10 md:pt-14 md:pb-12 lg:pt-[75px] lg:pb-12">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 md:left-10 md:translate-x-0 lg:left-0 h-1 w-[100px] bg-primary"></div>
         <div className="lg:flex lg:justify-between">
